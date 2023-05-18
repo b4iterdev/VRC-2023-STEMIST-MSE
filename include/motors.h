@@ -4,8 +4,6 @@
 
 #define MIN_PWM 0
 #define MAX_PWM 4095
-#define SERVOMIN  70  // Minimum value
-#define SERVOMAX  520  // Maximum value
 
 // PWM channels of pca9685 0-16
 #define PWM_CHANNEL1 8
@@ -41,7 +39,7 @@ void initMotors()
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(1600);
-  // pca9685.setPWMFreq(50); if controlling servo is needed.
+  // pwm.setPWMFreq(50); if controlling servo is needed.
   Wire.setClock(400000);
   setPWMMotors(0, 0, 0, 0);
 }
