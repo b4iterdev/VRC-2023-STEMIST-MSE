@@ -1,0 +1,2 @@
+[submodule "lib/Arduino-PS2X-ESP32-Makerbot"]
+	url = git@github.com:makerviet/Arduino-PS2X-ESP32-Makerbot.git
