@@ -7,13 +7,10 @@ PS2X ps2x; // create PS2 Controller Class object
 #define PS2_SEL 15 // SS     5
 #define PS2_CLK 14 // SLK   18
 
-#define TOP_SPEED 4095
-#define NORM_SPEED 2048
-#define TURNING_FACTOR 1
+//#define MIN_PWM 0
+//#define MAX_PWM 4095
+//bool RUN = 0;
 
-#define SINGLE_HAND_DRIVING 0
-#define TWO_HAND_DRIVING 1
-bool driving_mode = SINGLE_HAND_DRIVING;
 void setupPS2controller()
 {
   int err = -1;
@@ -22,59 +19,93 @@ void setupPS2controller()
     err = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT, true, true);
   }
 }
+
 bool PS2control()
 {
-  int speed = NORM_SPEED;
-  if (ps2x.Button(PSB_R2))
-    speed = TOP_SPEED;
-   if (ps2x.ButtonPressed(PSB_SELECT))
-    driving_mode =! driving_mode;
+  // Based on IgorF2's Arduino Bot:https://www.instructables.com/Arduino-Robot-With-PS2-Controller-PlayStation-2-Jo/
 
-  int nJoyX = 128 - ps2x.Analog(PSS_RX); // read x-joystick
-  int nJoyY = 128 - (driving_mode ? ps2x.Analog(PSS_LY) :ps2x.Analog(PSS_RY)); // read y-joystick
-  int nMotMixL;                          // Motor (left) mixed output
-  int nMotMixR;                          // Motor (right) mixed output
+  int nJoyX = ps2x.Analog(PSS_RX); // read x-joystick
+  int nJoyY = ps2x.Analog(PSS_LY); // read y-joystick
 
+  nJoyX = map(nJoyX, 0, 255, -3276, 3276);
+  nJoyY = map(nJoyY, 0, 255, 3276, -3276);
 
-  bool temp = (nJoyY * nJoyX > 0);
-  if (nJoyX) // Turning
+  // OUTPUTS
+  int nMotMixL; // Motor (left) mixed output
+  int nMotMixR; // Motor (right) mixed output
+
+  // CONFIG
+  // - fPivYLimt  : The threshold at which the pivot action starts
+  //                This threshold is measured in units on the Y-axis
+  //                away from the X-axis (Y=0). A greater value will assign
+  //                more of the joystick's range to pivot actions.
+  //                Allowable range: (0..+127)
+  float fPivYLimit = 1023.0;
+
+  // TEMP VARIABLES
+  float nMotPremixL; // Motor (left) premixed output
+  float nMotPremixR; // Motor (right) premixed output
+  int nPivSpeed;     // Pivot Speed
+  float fPivScale;   // Balance scale between drive and pivot
+
+  // Calculate Drive Turn output due to Joystick X input
+  if (nJoyY >= 0)
   {
-    nMotMixL = -nJoyX + (nJoyY * temp);
-    nMotMixR = nJoyX + (nJoyY * !temp);
+    // Forward
+    nMotPremixL = (nJoyX >= 0) ? 1023.0 : (1023.0 + nJoyX);
+    nMotPremixR = (nJoyX >= 0) ? (1023.0 - nJoyX) : 1023.0;
   }
-  else // Forward or Reverse
+  else
   {
-    nMotMixL = nJoyY;
-    nMotMixR = nJoyY;
+    // Reverse
+    nMotPremixL = (nJoyX >= 0) ? 1023.0 : (1023.0 + nJoyX);
+    nMotPremixR = (nJoyX >= 0) ? (1023.0 - nJoyX) : 1023.0;
   }
 
-  Serial.print(F("Calculated value from joystick: "));
+  // Scale Drive output due to Joystick Y input (throttle)
+  nMotPremixL = nMotPremixL * nJoyY / 1023.0;
+  nMotPremixR = nMotPremixR * nJoyY / 1023.0;
+
+  // Now calculate pivot amount
+  // - Strength of pivot (nPivSpeed) based on Joystick X input
+  // - Blending of pivot vs drive (fPivScale) based on Joystick Y input
+  nPivSpeed = nJoyX;
+  fPivScale = (abs(nJoyY) > fPivYLimit) ? 0.0 : (1.0 - abs(nJoyY) / fPivYLimit);
+
+  // Calculate final mix of Drive and Pivot
+  nMotMixL = (1.0 - fPivScale) * nMotPremixL + fPivScale * (nPivSpeed);
+  nMotMixR = (1.0 - fPivScale) * nMotPremixR + fPivScale * (-nPivSpeed);
+
   Serial.print(nMotMixL);
   Serial.print("\t");
   Serial.println(nMotMixR);
   int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
 
-  if (nMotMixR > 0)
+  if (nMotMixR > 50)
   {
     c3 = nMotMixR;
-    c3 = map(c3, 0, 128, 0, speed);
+    // pwm.setPWM(PWM_CHANNEL1, motor_right_speed, MAX_PWM - motor_right_speed );
+    // pwm.setPWM(PWM_CHANNEL2, 0, MAX_PWM );
   }
 
-  else if (nMotMixR < 0)
+  else if (nMotMixR < -50)
   {
-    c4 = abs(nMotMixR) + 1;
-    c4 = map(c4, 0, 128, 0, speed);
+    // pwm.setPWM(PWM_CHANNEL2, motor_right_speed, MAX_PWM - motor_right_speed );
+    // pwm.setPWM(PWM_CHANNEL1, 0, MAX_PWM );
+    c4 = abs(nMotMixR);
   }
 
-  if (nMotMixL > 0)
+  if (nMotMixL > 50)
   {
+    // pwm.setPWM(PWM_CHANNEL3, motor_left_speed, MAX_PWM - motor_left_speed );
+    // pwm.setPWM(PWM_CHANNEL4, 0, MAX_PWM );
     c1 = nMotMixL;
-    c1 = map(c1, 0, 128, 0, speed);
   }
-  else if (nMotMixL < 0)
+  else if (nMotMixL < -50)
   {
-    c2 = abs(nMotMixL)+1;
-    c2 = map(c2, 0, 128, 0, speed);
+    // pwm.setPWM(PWM_CHANNEL4, motor_left_speed, MAX_PWM - motor_left_speed );
+    // pwm.setPWM(PWM_CHANNEL3, 0, MAX_PWM );
+    c2 = abs(nMotMixL);
   }
   setPWMMotors(c1, c2, c3, c4);
   return 1;

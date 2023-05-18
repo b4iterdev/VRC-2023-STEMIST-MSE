@@ -19,14 +19,20 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 void setPWMMotors(int c1, int c2, int c3, int c4)
 {
-  char dbg_str[30];
-  sprintf(dbg_str,"C1: %d\tC2: %d\tC3: %d\tC4: %d",c1,c2,c3,c4);
-  Serial.println(dbg_str);
+  // setPWM(channel, on_duty_cycle, off_duty_cycle)
+  Serial.print(c1);
+  Serial.print("\t");
+  Serial.print(c2);
+  Serial.print("\t");
+  Serial.print(c3);
+  Serial.print("\t");
+  Serial.print(c4);
+  Serial.println();
 
-  pwm.setPWM(PWM_CHANNEL1, 0, c1);
-  pwm.setPWM(PWM_CHANNEL2, 0, c2);
-  pwm.setPWM(PWM_CHANNEL3, 0, c3);
-  pwm.setPWM(PWM_CHANNEL4, 0, c4);
+  pwm.setPWM(PWM_CHANNEL1, c1, MAX_PWM - c1);
+  pwm.setPWM(PWM_CHANNEL2, c2, MAX_PWM - c2);
+  pwm.setPWM(PWM_CHANNEL3, c3, MAX_PWM - c3);
+  pwm.setPWM(PWM_CHANNEL4, c4, MAX_PWM - c4);
 }
 
 void initMotors()
