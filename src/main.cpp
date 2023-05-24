@@ -12,7 +12,8 @@
  */
 
 /*
-  This version is modified internally by STEMIST MSE 2023 Team.
+  This version is heavily modified internally by STEMIST MSE 2023 Team.
+  Disabled nitro-like speed boost and switch driving mode.
   Written by B4iter - STEMIST MSE Gen 5
 */
 // define motor 3 and 4.
