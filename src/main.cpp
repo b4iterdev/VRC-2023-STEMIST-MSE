@@ -31,11 +31,15 @@
 
 #define SERVOMIN  70  // Minimum value
 #define SERVOMAX  520  // Maximum value
+#define MIN_SERVO_180_SPEED 204
+#define MAX_SERVO_180_SPEED 410
+#define MIN_SERVO_360_SPEED 93
+#define MAX_SERVO_360_SPEED 440
 
 // define desired servo position, it must be configured manually and applied before duty cycle implementation.
 int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
 // duty cycle implementation.
-int servo1 = map(servo1_pos, 0, 180, SERVOMIN, SERVOMAX);
+int servo1 = map(servo1_pos, 0, 180, MIN_SERVO_180_SPEED, MAX_SERVO_180_SPEED);
 
 void setup()
 {
