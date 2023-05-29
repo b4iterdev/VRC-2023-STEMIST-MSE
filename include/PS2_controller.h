@@ -38,10 +38,10 @@ bool PS2control()
     nMotMixR = nJoyY;
   }
 
-  Serial.print(F("Calculated value from joystick: "));
-  Serial.print(nMotMixL);
-  Serial.print("\t");
-  Serial.println(nMotMixR);
+  // Serial.print(F("Calculated value from joystick: "));
+  // Serial.print(nMotMixL);
+  // Serial.print("\t");
+  // Serial.println(nMotMixR);
   int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
 
   if (nMotMixR > 0)

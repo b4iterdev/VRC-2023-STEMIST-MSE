@@ -29,8 +29,6 @@
 #define Servo_5_pin 3
 #define Servo_6_pin 2
 
-#define SERVOMIN  70  // Minimum value
-#define SERVOMAX  520  // Maximum value
 #define MIN_SERVO_180_SPEED 204
 #define MAX_SERVO_180_SPEED 410
 #define MIN_SERVO_360_SPEED 93
@@ -39,7 +37,7 @@
 // define desired servo position, it must be configured manually and applied before duty cycle implementation.
 int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
 // duty cycle implementation.
-int servo1 = map(servo1_pos, 0, 180, MIN_SERVO_180_SPEED, MAX_SERVO_180_SPEED);
+//int servo1 = map(servo1_pos, 0, 180, MIN_SERVO_180_SPEED, MAX_SERVO_180_SPEED);
 
 void setup()
 {
@@ -53,5 +51,24 @@ void loop()
 {
   ps2x.read_gamepad(0, 0);
   PS2control();
+  if (ps2x.ButtonPressed(PSB_CIRCLE))
+  {
+    servo1_pos = 180;
+    long servo1 = map(servo1_pos, 0, 180, MIN_SERVO_180_SPEED, MAX_SERVO_180_SPEED);
+    Serial.println(servo1);
+    pwm.setPWM(2,0,servo1);
+    if(ps2x.ButtonReleased(PSB_CIRCLE)) {
+      pwm.setPWM(2,0,0);
+    }
+  } else if (ps2x.ButtonPressed(PSB_CROSS))
+  {
+    servo1_pos = 0;
+    long servo1 = map(servo1_pos, 0, 180, MIN_SERVO_180_SPEED, MAX_SERVO_180_SPEED);
+    Serial.println(servo1);
+    pwm.setPWM(2,0,servo1);
+    if(ps2x.ButtonReleased(PSB_CIRCLE)) {
+      pwm.setPWM(2,0,0);
+    }
+  }
   delay(50);
 }

@@ -17,7 +17,7 @@ void setPWMMotors(int c1, int c2, int c3, int c4)
 {
   char dbg_str[30];
   sprintf(dbg_str,"C1: %d\tC2: %d\tC3: %d\tC4: %d",c1,c2,c3,c4);
-  Serial.println(dbg_str);
+  // Serial.println(dbg_str);
   pwm.setPWM(PWM_CHANNEL1, 0, c1);
   pwm.setPWM(PWM_CHANNEL2, 0, c2);
   pwm.setPWM(PWM_CHANNEL3, 0, c3);
