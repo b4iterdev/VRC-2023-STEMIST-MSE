@@ -8,7 +8,6 @@ PS2X ps2x; // create PS2 Controller Class object
 #define PS2_CLK 14 // SLK   18
 
 #define SPEED 4095
-#define TURNING_FACTOR 1
 
 void setupPS2controller()
 {

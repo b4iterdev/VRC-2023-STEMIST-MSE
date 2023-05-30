@@ -29,15 +29,14 @@
 #define Servo_5_pin 3
 #define Servo_6_pin 2
 
-#define MIN_SERVO_180_SPEED 204
-#define MAX_SERVO_180_SPEED 410
-#define MIN_SERVO_360_SPEED 93
-#define MAX_SERVO_360_SPEED 440
+#define MIN_SERVO 93
+#define MAX_SERVO 600
+#define MAX_SERVO_RESERVE 200
 
 // define desired servo position, it must be configured manually and applied before duty cycle implementation.
 int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
 // duty cycle implementation.
-//int servo1 = map(servo1_pos, 0, 180, MIN_SERVO_180_SPEED, MAX_SERVO_180_SPEED);
+//int servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
 
 void setup()
 {
@@ -54,21 +53,13 @@ void loop()
   if (ps2x.ButtonPressed(PSB_CIRCLE))
   {
     servo1_pos = 180;
-    long servo1 = map(servo1_pos, 0, 180, MIN_SERVO_180_SPEED, MAX_SERVO_180_SPEED);
-    Serial.println(servo1);
+    long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-    if(ps2x.ButtonReleased(PSB_CIRCLE)) {
-      pwm.setPWM(2,0,0);
-    }
   } else if (ps2x.ButtonPressed(PSB_CROSS))
   {
-    servo1_pos = 0;
-    long servo1 = map(servo1_pos, 0, 180, MIN_SERVO_180_SPEED, MAX_SERVO_180_SPEED);
-    Serial.println(servo1);
-    pwm.setPWM(2,0,servo1);
-    if(ps2x.ButtonReleased(PSB_CIRCLE)) {
-      pwm.setPWM(2,0,0);
-    }
+    servo1_pos = 180;
+    long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
+    pwm.setPWM(2,0,200);
   }
   delay(50);
 }
