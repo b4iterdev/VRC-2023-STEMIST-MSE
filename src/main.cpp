@@ -46,6 +46,20 @@ void setup()
   Serial.println("Done setup!");
 }
 
+int delayedStart(unsigned int PWM_CHANNEL) {
+  long long time = millis();
+  if (millis() - time <= 200) {
+    pwm.setPWM(PWM_CHANNEL,0,1024);
+  } else if (millis() - time >= 200 && millis() - time <= 400) {
+    pwm.setPWM(PWM_CHANNEL,0,2048);
+  } else if (millis() - time >= 400 && millis() - time <= 1000) {
+    pwm.setPWM(PWM_CHANNEL,0,3072);
+  } else if (millis() - time >= 1000) {
+    pwm.setPWM(PWM_CHANNEL,0,4095);
+    return 0;
+  } 
+}
+
 void loop()
 {
   ps2x.read_gamepad(0, 0);
@@ -63,17 +77,17 @@ void loop()
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
   } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    pwm.setPWM(PWM_CHANNEL5,0,4095);
+    delayedStart(PWM_CHANNEL5);
     pwm.setPWM(PWM_CHANNEL6,0,0);
   } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    pwm.setPWM(PWM_CHANNEL7,0,4095);
+    delayedStart(PWM_CHANNEL7);
     pwm.setPWM(PWM_CHANNEL8,0,0);
   } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
     pwm.setPWM(PWM_CHANNEL5,0,0);
-    pwm.setPWM(PWM_CHANNEL6,0,4095);
+    delayedStart(PWM_CHANNEL6);
   } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
     pwm.setPWM(PWM_CHANNEL7,0,0);
-    pwm.setPWM(PWM_CHANNEL8,0,4095);
+    delayedStart(PWM_CHANNEL8);
   } else if (ps2x.ButtonPressed(PSB_L1)) {
     pwm.setPWM(PWM_CHANNEL5,0,0);
     pwm.setPWM(PWM_CHANNEL6,0,0);
