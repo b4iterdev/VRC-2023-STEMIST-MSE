@@ -50,19 +50,18 @@ void loop()
 {
   ps2x.read_gamepad(0, 0);
   PS2control();
-  if (ps2x.ButtonPressed(PSB_CIRCLE))
-  {
+  if (ps2x.ButtonReleased(PSB_CROSS) || ps2x.ButtonReleased(PSB_CIRCLE)) {
     servo1_pos = 90;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-  } else if (ps2x.ButtonPressed(PSB_CROSS))
-  {
+  } else if (ps2x.Button(PSB_CROSS)) {
     servo1_pos = 0;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-  } else if (ps2x.ButtonPressed(PSB_L2)) 
-  {
-    pwm.setPWM(2,0,0);
+  } else if (ps2x.Button(PSB_CIRCLE)) {
+    servo1_pos = 180;
+    long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
+    pwm.setPWM(2,0,servo1);
   } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
     pwm.setPWM(PWM_CHANNEL5,0,4095);
     pwm.setPWM(PWM_CHANNEL6,0,0);
@@ -75,10 +74,10 @@ void loop()
   } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
     pwm.setPWM(PWM_CHANNEL7,0,0);
     pwm.setPWM(PWM_CHANNEL8,0,4095);
-  }
-   else if (ps2x.ButtonPressed(PSB_L1)) {
+  } else if (ps2x.ButtonPressed(PSB_L1)) {
     pwm.setPWM(PWM_CHANNEL5,0,0);
     pwm.setPWM(PWM_CHANNEL6,0,0);
+  } else if (ps2x.ButtonPressed(PSB_R1)) {
     pwm.setPWM(PWM_CHANNEL7,0,0);
     pwm.setPWM(PWM_CHANNEL8,0,0);
   }
