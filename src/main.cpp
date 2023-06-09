@@ -13,9 +13,11 @@
 
 /*
   This version is heavily modified internally by STEMIST MSE 2023 Team.
-  Disabled nitro-like speed boost and switch driving mode.
+    - Disabled nitro-like speed boost and switch driving mode.
+    - Add additional motor control and servo control.
   Written by B4iter - STEMIST MSE Gen 5
 */
+
 // define motor 3 and 4.
 #define PWM_CHANNEL5 12
 #define PWM_CHANNEL6 13
@@ -46,6 +48,9 @@ void setup()
   Serial.println("Done setup!");
 }
 
+/*
+  This funtion will make selected PWM Channel to start from 1024 on first stage and full speed when reached 1 second of runtime.
+*/
 int delayedStart(unsigned int PWM_CHANNEL) {
   long long time = millis();
   if (millis() - time <= 200) {
