@@ -106,7 +106,21 @@ void setup()
   // Debug Panel Begin here. 
   auto maintab = ESPUI.addControl(Tab, "Debug Info", "Debug Info");
   ESPUI.addControl(Label, "Status", "System status: OK", Alizarin, maintab, generalCallback);
-  ESPUI.addControl(Label, "Control PWM Status:", "PWM1: " + pwm.getPWM(8), Alizarin, maintab, generalCallback);
+  uint16_t PWMMotor1s1 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin A", getMotorOutput(1), Alizarin, maintab, generalCallback);
+  ESPUI.addControl(Min, "", "0", None, PWMMotor1s1);
+  ESPUI.addControl(Max, "", "4095", None, PWMMotor1s1);
+  uint16_t PWMMotor1s2 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin B", getMotorOutput(2), Alizarin, maintab, generalCallback);
+  ESPUI.addControl(Min, "", "0", None, PWMMotor1s2);
+  ESPUI.addControl(Max, "", "4095", None, PWMMotor1s2);
+  uint16_t PWMMotor2s1 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin A", getMotorOutput(3), Alizarin, maintab, generalCallback);
+  ESPUI.addControl(Min, "", "0", None, PWMMotor2s1);
+  ESPUI.addControl(Max, "", "4095", None, PWMMotor2s1);
+  uint16_t PWMMotor2s2 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin B", getMotorOutput(1), Alizarin, maintab, generalCallback);
+  ESPUI.addControl(Min, "", "0", None, PWMMotor2s2);
+  ESPUI.addControl(Max, "", "4095", None, PWMMotor2s2);
+  uint16_t servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab, generalCallback);
+  ESPUI.addControl(Min, "", "0", None, servo1pos);
+  ESPUI.addControl(Max, "", "180", None, servo1pos);
 	//Make sliders continually report their position as they are being dragged.
 	ESPUI.sliderContinuous = true;
   ESPUI.begin("STEMIST MSE - VRC 2023 Debug Panel");

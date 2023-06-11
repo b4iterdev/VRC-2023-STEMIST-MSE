@@ -1,5 +1,4 @@
 #include <PS2X_lib.h>
-
 PS2X ps2x; // create PS2 Controller Class object
 
 // calibration for different kinds of PS2 controller, this value only suitable for the PS2 controller comes with VRC2023 K12 Maker kit 
@@ -11,6 +10,8 @@ PS2X ps2x; // create PS2 Controller Class object
 #define PS2_CLK 14 // SLK   18
 
 #define SPEED 4095
+
+int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
 
 void setupPS2controller()
 {
@@ -52,8 +53,7 @@ bool PS2control()
   // Serial.print(nMotMixL);
   // Serial.print("\t");
   // Serial.println(nMotMixR);
-   int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
-
+   
   if (nMotMixR > 0)
   {
     c3 = nMotMixR;
@@ -78,4 +78,22 @@ bool PS2control()
   }
   setPWMMotors(c1, c2, c3, c4);
   return 1;
+}
+
+String getMotorOutput(unsigned int num) {
+  switch (num) {
+    case 1: 
+    return String(c1);
+    break;
+    case 2:
+    return String(c2);
+    break;
+    case 3:
+    return String(c3);
+    break;
+    case 4:
+    return String(c4);
+    break;
+  } 
+  return "Error";
 }
