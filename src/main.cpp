@@ -127,22 +127,6 @@ void setup()
   Serial.println("Done setup!");
 }
 
-/*
-  This funtion will make selected PWM Channel to start from 1024 on first stage and full speed when reached 1 second of runtime.
-*/
-void delayedStart(unsigned int PWM_CHANNEL) {
-  long long time = millis();
-  if (millis() - time <= 200) {
-    pwm.setPWM(PWM_CHANNEL,0,1024);
-  } else if (millis() - time >= 200 && millis() - time <= 400) {
-    pwm.setPWM(PWM_CHANNEL,0,2048);
-  } else if (millis() - time >= 400 && millis() - time <= 1000) {
-    pwm.setPWM(PWM_CHANNEL,0,3072);
-  } else if (millis() - time >= 1000) {
-    pwm.setPWM(PWM_CHANNEL,0,4095);
-    return;
-  } 
-}
 
 void loop()
 {
