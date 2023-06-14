@@ -24,10 +24,10 @@ void setupPS2controller()
 bool PS2control()
 {
 
-  // int nJoyX = 128 - ps2x.Analog(PSS_RX); // read x-joystick
-  // int nJoyY = 128 - ps2x.Analog(PSS_LY); // read y-joystick
-  int nJoyX = X_JOY_CALIB - ps2x.Analog(PSS_RX); // read x-joystick
-  int nJoyY = Y_JOY_CALIB - ps2x.Analog(PSS_LY); // read y-joystick
+  int nJoyX = 128 - ps2x.Analog(PSS_RX); // read x-joystick
+  int nJoyY = 128 - ps2x.Analog(PSS_LY); // read y-joystick
+  // int nJoyX = X_JOY_CALIB - ps2x.Analog(PSS_RX); // read x-joystick
+  // int nJoyY = Y_JOY_CALIB - ps2x.Analog(PSS_LY); // read y-joystick
   int nMotMixL;                          // Motor (left) mixed output
   int nMotMixR;                          // Motor (right) mixed output
 
@@ -73,7 +73,7 @@ bool PS2control()
   }
   else if (nMotMixL < 0)
   {
-    c2 = abs(nMotMixL);
+    c2 = abs(nMotMixL) + 1;
     c2 = map(c2, 0, 128, 0, SPEED);
   }
   setPWMMotors(c1, c2, c3, c4);
