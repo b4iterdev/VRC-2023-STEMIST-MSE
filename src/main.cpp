@@ -146,17 +146,17 @@ void loop()
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
   } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    delayedStart(PWM_CHANNEL5);
+    pwm.setPWM(PWM_CHANNEL5,0,4095);
     pwm.setPWM(PWM_CHANNEL6,0,0);
   } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    delayedStart(PWM_CHANNEL7);
+    pwm.setPWM(PWM_CHANNEL7,0,4095);
     pwm.setPWM(PWM_CHANNEL8,0,0);
   } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
     pwm.setPWM(PWM_CHANNEL5,0,0);
-    delayedStart(PWM_CHANNEL6);
+    pwm.setPWM(PWM_CHANNEL6,0,4095);
   } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
     pwm.setPWM(PWM_CHANNEL7,0,0);
-    delayedStart(PWM_CHANNEL8);
+    pwm.setPWM(PWM_CHANNEL8,0,4095);
   } else if (ps2x.ButtonPressed(PSB_L1)) {
     pwm.setPWM(PWM_CHANNEL5,0,0);
     pwm.setPWM(PWM_CHANNEL6,0,0);
