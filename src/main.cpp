@@ -52,9 +52,9 @@ void additionalMotorInput() {
     motor3s = -1;
   } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
     motor4s = -1;
-  } else if(ps2x.ButtonPressed(PSB_L1)) {
+  } else if(ps2x.ButtonPressed(PSB_CROSS)) {
     motor3s = 0;
-  } else if(ps2x.ButtonPressed(PSB_R1)) {
+  } else if(ps2x.ButtonPressed(PSB_CIRCLE)) {
     motor4s = 0;
   }
 }
@@ -185,15 +185,11 @@ void updateRequest() {
 }
 
 void servoControl(){
-if (ps2x.ButtonReleased(PSB_CROSS) || ps2x.ButtonReleased(PSB_CIRCLE)) {
+if (ps2x.ButtonReleased(PSB_PAD_LEFT) || ps2x.ButtonReleased(PSB_PAD_RIGHT)) {
     servo1_pos = 90;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-    unsigned long currentTime = millis();
-    if (millis() - currentTime >= 1500) {
-      pwm.setPWM(2,0,0);
-    }
-  } else if (ps2x.Button(PSB_CROSS)) {
+  } else if (ps2x.Button(PSB_PAD_LEFT)) {
     servo1_pos = 30;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
@@ -201,25 +197,7 @@ if (ps2x.ButtonReleased(PSB_CROSS) || ps2x.ButtonReleased(PSB_CIRCLE)) {
     servo1_pos = 150;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    pwm.setPWM(PWM_CHANNEL5,0,4095);
-    pwm.setPWM(PWM_CHANNEL6,0,0);
-  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    pwm.setPWM(PWM_CHANNEL7,0,4095);
-    pwm.setPWM(PWM_CHANNEL8,0,0);
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    pwm.setPWM(PWM_CHANNEL5,0,0);
-    pwm.setPWM(PWM_CHANNEL6,0,4095);
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    pwm.setPWM(PWM_CHANNEL7,0,0);
-    pwm.setPWM(PWM_CHANNEL8,0,4095);
-  } else if (ps2x.ButtonPressed(PSB_CROSS)) {
-    pwm.setPWM(PWM_CHANNEL5,0,0);
-    pwm.setPWM(PWM_CHANNEL6,0,0);
-  } else if (ps2x.ButtonPressed(PSB_CIRCLE)) {
-    pwm.setPWM(PWM_CHANNEL7,0,0);
-    pwm.setPWM(PWM_CHANNEL8,0,0);
-  }
+  } 
 }
 
 void setup()
