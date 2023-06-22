@@ -52,15 +52,15 @@ void loop()
 {
   ps2x.read_gamepad(0, 0);
   PS2control();
-  if (ps2x.ButtonReleased(PSB_CROSS) || ps2x.ButtonReleased(PSB_CIRCLE)) {
+  if (ps2x.ButtonReleased(PSB_PAD_LEFT) || ps2x.ButtonReleased(PSB_PAD_RIGHT)) {
     servo1_pos = 90;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-  } else if (ps2x.Button(PSB_CROSS)) {
+  } else if (ps2x.Button(PSB_PAD_LEFT)) {
     servo1_pos = 30;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-  } else if (ps2x.Button(PSB_CIRCLE)) {
+  } else if (ps2x.Button(PSB_PAD_RIGHT)) {
     servo1_pos = 150;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
