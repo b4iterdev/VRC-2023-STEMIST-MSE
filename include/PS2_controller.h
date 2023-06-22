@@ -1,7 +1,7 @@
 #include <PS2X_lib.h>
 
 PS2X ps2x; // create PS2 Controller Class object
-#define BEBUG_CTRL
+#define DEBUG
 
 // calibration for different kinds of PS2 controller, this value only suitable for the PS2 controller comes with VRC2023 K12 Maker kit 
 #define X_JOY_CALIB 127
@@ -12,11 +12,12 @@ PS2X ps2x; // create PS2 Controller Class object
 #define PS2_SEL 15 // SS     5
 #define PS2_CLK 14 // SLK   18
 
-#define speed 4095
+#define TOP_SPEED 4095
+#define NORM_SPEED 2048
+#define TURNING_FACTOR 1
 
-#define SINGLE_HAND_DRIVING 0
-#define TWO_HAND_DRIVING 1
-bool driving_mode = TWO_HAND_DRIVING;
+int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+
 void setupPS2controller()
 {
   int err = -1;
@@ -28,8 +29,12 @@ void setupPS2controller()
 }
 bool PS2control()
 {
+  int speed = NORM_SPEED;
+  if (ps2x.Button(PSB_R2)) {
+    speed = TOP_SPEED;
+  }
   int nJoyX = X_JOY_CALIB - ps2x.Analog(PSS_RX); // read x-joystick
-  int nJoyY = Y_JOY_CALIB - (driving_mode ? ps2x.Analog(PSS_LY) :ps2x.Analog(PSS_RY)); // read y-joystick
+  int nJoyY = Y_JOY_CALIB - ps2x.Analog(PSS_LY); // read y-joystick
   int nMotMixL;                          // Motor (left) mixed output
   int nMotMixR;                          // Motor (right) mixed output
 
@@ -50,13 +55,13 @@ bool PS2control()
     nMotMixL = nJoyY;
     nMotMixR = nJoyY;
   }
-  #ifdef BEBUG_CTRL
+
+  #ifdef DEBUG
   Serial.print(F("Calculated value from joystick: "));
   Serial.print(nMotMixL);
   Serial.print("\t");
   Serial.println(nMotMixR);
   #endif
-  int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
 
   if (nMotMixR > 0)
   {
