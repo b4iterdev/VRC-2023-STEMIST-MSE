@@ -57,11 +57,11 @@ void loop()
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
   } else if (ps2x.Button(PSB_CROSS)) {
-    servo1_pos = 0;
+    servo1_pos = 30;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
   } else if (ps2x.Button(PSB_CIRCLE)) {
-    servo1_pos = 180;
+    servo1_pos = 150;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
   } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
