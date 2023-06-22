@@ -76,10 +76,10 @@ void loop()
   } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
     pwm.setPWM(PWM_CHANNEL7,0,0);
     pwm.setPWM(PWM_CHANNEL8,0,4095);
-  } else if (ps2x.ButtonPressed(PSB_L1)) {
+  } else if (ps2x.ButtonPressed(PSB_CROSS)) {
     pwm.setPWM(PWM_CHANNEL5,0,0);
     pwm.setPWM(PWM_CHANNEL6,0,0);
-  } else if (ps2x.ButtonPressed(PSB_R1)) {
+  } else if (ps2x.ButtonPressed(PSB_CIRCLE)) {
     pwm.setPWM(PWM_CHANNEL7,0,0);
     pwm.setPWM(PWM_CHANNEL8,0,0);
   }
