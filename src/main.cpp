@@ -197,10 +197,28 @@ if (ps2x.ButtonReleased(PSB_CROSS) || ps2x.ButtonReleased(PSB_CIRCLE)) {
     servo1_pos = 30;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-  } else if (ps2x.Button(PSB_CIRCLE)) {
+  } else if (ps2x.Button(PSB_PAD_RIGHT)) {
     servo1_pos = 150;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
+  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
+    pwm.setPWM(PWM_CHANNEL5,0,4095);
+    pwm.setPWM(PWM_CHANNEL6,0,0);
+  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
+    pwm.setPWM(PWM_CHANNEL7,0,4095);
+    pwm.setPWM(PWM_CHANNEL8,0,0);
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
+    pwm.setPWM(PWM_CHANNEL5,0,0);
+    pwm.setPWM(PWM_CHANNEL6,0,4095);
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
+    pwm.setPWM(PWM_CHANNEL7,0,0);
+    pwm.setPWM(PWM_CHANNEL8,0,4095);
+  } else if (ps2x.ButtonPressed(PSB_CROSS)) {
+    pwm.setPWM(PWM_CHANNEL5,0,0);
+    pwm.setPWM(PWM_CHANNEL6,0,0);
+  } else if (ps2x.ButtonPressed(PSB_CIRCLE)) {
+    pwm.setPWM(PWM_CHANNEL7,0,0);
+    pwm.setPWM(PWM_CHANNEL8,0,0);
   }
 }
 
