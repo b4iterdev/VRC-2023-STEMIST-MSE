@@ -17,7 +17,7 @@ PS2X ps2x; // create PS2 Controller Class object
 #define PRECISE_SPEED 2048
 #define TURNING_FACTOR 1
 
-int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+int speed = NORM_SPEED;
 
 void setupPS2controller()
 {
@@ -30,11 +30,12 @@ void setupPS2controller()
 }
 bool PS2control()
 {
-  int speed = NORM_SPEED;
   if (ps2x.Button(PSB_R1)) {
     speed = TOP_SPEED;
   } else if (ps2x.Button(PSB_L1)) {
     speed = PRECISE_SPEED;
+  } else {
+    speed = NORM_SPEED;
   }
   int nJoyX = X_JOY_CALIB - ps2x.Analog(PSS_RX); // read x-joystick
   int nJoyY = Y_JOY_CALIB - ps2x.Analog(PSS_LY); // read y-joystick
@@ -65,7 +66,7 @@ bool PS2control()
   Serial.print("\t");
   Serial.println(nMotMixR);
   #endif
-
+  int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
   if (nMotMixR > 0)
   {
     c3 = nMotMixR;
