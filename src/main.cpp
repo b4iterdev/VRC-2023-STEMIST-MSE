@@ -43,28 +43,6 @@ unsigned int addMotorSpeed = 4095;
 int motor3s = 0;
 int motor4s = 0;
 
-void additionalMotorInput() {
-  if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    motor3s = 1;
-    additionalMotor();
-  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    motor4s = 1;
-    additionalMotor();
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    motor3s = -1;
-    additionalMotor();
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    motor4s = -1;
-    additionalMotor();
-  } else if(ps2x.ButtonPressed(PSB_CROSS)) {
-    motor3s = 0;
-    additionalMotor();
-  } else if(ps2x.ButtonPressed(PSB_CIRCLE)) {
-    motor4s = 0;
-    additionalMotor();
-  }
-}
-
 void additionalMotor() {
   if (motor3s == 1) {
     pwm.setPWM(PWM_CHANNEL5,0,addMotorSpeed);
@@ -92,6 +70,29 @@ void additionalMotor() {
     return;
   }
 }
+
+void additionalMotorInput() {
+  if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
+    motor3s = 1;
+    additionalMotor();
+  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
+    motor4s = 1;
+    additionalMotor();
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
+    motor3s = -1;
+    additionalMotor();
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
+    motor4s = -1;
+    additionalMotor();
+  } else if(ps2x.ButtonPressed(PSB_CROSS)) {
+    motor3s = 0;
+    additionalMotor();
+  } else if(ps2x.ButtonPressed(PSB_CIRCLE)) {
+    motor4s = 0;
+    additionalMotor();
+  }
+}
+
 // define desired servo position, it must be configured manually and applied before duty cycle implementation.
 int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
 // duty cycle implementation.
