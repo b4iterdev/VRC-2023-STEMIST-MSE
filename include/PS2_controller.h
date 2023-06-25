@@ -40,6 +40,7 @@ bool PS2control()
   int nMotMixL;                          // Motor (left) mixed output
   int nMotMixR;                          // Motor (right) mixed output
 
+  
   if(nJoyX == -1 && nJoyY == 0) // in case of lost connection with the wireless controller, only used in VRC2023 PS2 wireless controller 
   {
     setPWMMotors(0, 0, 0, 0);
@@ -64,7 +65,7 @@ bool PS2control()
   Serial.print("\t");
   Serial.println(nMotMixR);
   #endif
-
+  c1 = 0, c2 = 0, c3 = 0, c4 = 0;
   if (nMotMixR > 0)
   {
     c3 = nMotMixR;
