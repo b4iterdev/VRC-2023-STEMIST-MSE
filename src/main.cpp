@@ -106,7 +106,7 @@ const char *password = "stemistclub";
 
 const char *hostname = "stemist.mse";
 
-void generalCallback(Control *sender, int type) {
+void nullCallback(Control *sender, int type) {
 }
 
 uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2;
@@ -156,25 +156,25 @@ void initPanel() {
   // Debug Panel Begin here. 
   auto maintab = ESPUI.addControl(Tab, "Debug Info", "Debug Info");
   ESPUI.addControl(ControlType::Separator, "Main motors status", "", ControlColor::None, maintab);
-  PWMMotor1s1 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin A", getMotorOutput(1), Alizarin, maintab, generalCallback);
+  PWMMotor1s1 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin A", getMotorOutput(1), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, PWMMotor1s1);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor1s1);
-  PWMMotor1s2 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin B", getMotorOutput(2), Alizarin, maintab, generalCallback);
+  PWMMotor1s2 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin B", getMotorOutput(2), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, PWMMotor1s2);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor1s2);
-  PWMMotor2s1 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin A", getMotorOutput(3), Alizarin, maintab, generalCallback);
+  PWMMotor2s1 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin A", getMotorOutput(3), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, PWMMotor2s1);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor2s1);
-  PWMMotor2s2 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin B", getMotorOutput(1), Alizarin, maintab, generalCallback);
+  PWMMotor2s2 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin B", getMotorOutput(1), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, PWMMotor2s2);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor2s2);
   ESPUI.addControl(ControlType::Separator, "Additional Motors Status", "", ControlColor::None, maintab);
-  PWMMotor3s1 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin A", String(motor3s == 1), Alizarin, maintab, generalCallback);
-  PWMMotor3s2 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin B", String(motor3s == -1), Alizarin, maintab, generalCallback);
-  PWMMotor4s1 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin A", String(motor4s == 1), Alizarin, maintab, generalCallback);
-  PWMMotor4s2 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin B", String(motor4s == -1), Alizarin, maintab, generalCallback);
+  PWMMotor3s1 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin A", String(motor3s == 1), Alizarin, maintab, nullCallback);
+  PWMMotor3s2 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin B", String(motor3s == -1), Alizarin, maintab, nullCallback);
+  PWMMotor4s1 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin A", String(motor4s == 1), Alizarin, maintab, nullCallback);
+  PWMMotor4s2 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin B", String(motor4s == -1), Alizarin, maintab, nullCallback);
   ESPUI.addControl(ControlType::Separator, "Servo Status", "", ControlColor::None, maintab);
-  servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab, generalCallback);
+  servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, servo1pos);
   ESPUI.addControl(Max, "", "180", None, servo1pos);
   auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
