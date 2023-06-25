@@ -16,6 +16,7 @@ PS2X ps2x; // create PS2 Controller Class object
 #define PRECISE_SPEED 2048
 #define TURNING_FACTOR 1
 
+int speed = NORM_SPEED;
 int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
 
 void setupPS2controller()
@@ -29,17 +30,17 @@ void setupPS2controller()
 }
 bool PS2control()
 {
-  int speed = NORM_SPEED;
   if (ps2x.Button(PSB_R1)) {
     speed = TOP_SPEED;
   } else if (ps2x.Button(PSB_L1)) {
     speed = PRECISE_SPEED;
+  } else {
+    speed = NORM_SPEED;
   }
   int nJoyX = X_JOY_CALIB - ps2x.Analog(PSS_RX); // read x-joystick
   int nJoyY = Y_JOY_CALIB - ps2x.Analog(PSS_LY); // read y-joystick
   int nMotMixL;                          // Motor (left) mixed output
   int nMotMixR;                          // Motor (right) mixed output
-
   
   if(nJoyX == -1 && nJoyY == 0) // in case of lost connection with the wireless controller, only used in VRC2023 PS2 wireless controller 
   {
