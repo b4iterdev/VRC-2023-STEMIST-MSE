@@ -60,8 +60,11 @@ void addMotorControlCallback(Control *sender, int type) {
   Serial.print("Slider: ID: ");
   Serial.print(sender->id);
   Serial.print(", Value: ");
+  int switchval = sender->value.toInt();
+  Serial.print(switchval);
+  addMotorSpeed = switchval;
 }
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl;
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -105,9 +108,10 @@ void initPanel() {
   ESPUI.addControl(Min, "", "0", None, servo1pos);
   ESPUI.addControl(Max, "", "180", None, servo1pos);
   auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
-  addMotorControl = ESPUI.addControl(ControlType::Slider, "Additional Motor Speed", String(addMotorSpeed), Alizarin, maintab, addMotorControlCallback);
+  addMotorControl = ESPUI.addControl(ControlType::Slider, "Additional Motor Speed", String(addMotorSpeed), Alizarin, configtab, addMotorControlCallback);
   ESPUI.addControl(Min, "", "0", None, addMotorControl);
   ESPUI.addControl(Max, "", "4095", None, addMotorControl);
+  configWarning = ESPUI.addControl(Label,"Warning","Only use this if you know what you're doing",ControlColor::Peterriver,configtab,nullCallback);
   auto abouttab = ESPUI.addControl(Tab, "About", "About");
   //Make sliders continually report their position as they are being dragged.
   ESPUI.sliderContinuous = true;
@@ -213,6 +217,13 @@ if (ps2x.ButtonReleased(PSB_PAD_LEFT) || ps2x.ButtonReleased(PSB_PAD_RIGHT)) {
   }
 } 
 
+void configtabDisable() {
+  ESPUI.setPanelStyle(addMotorControl, ";");
+  ESPUI.setEnabled(addMotorControl, false);
+  const String disabledstyle = "background-color: #bbb; border-bottom: #999 3px solid;";
+  ESPUI.setPanelStyle(addMotorControl, disabledstyle);
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -226,6 +237,9 @@ void loop()
 {
   ps2x.read_gamepad(0, 0);
   PS2control();
+  if(ps2x.ButtonPressed(PSB_START)) {
+    configtabDisable();
+  }
   additionalMotorInput();
   servoControl();
   updateRequest();
