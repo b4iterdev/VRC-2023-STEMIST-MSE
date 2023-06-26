@@ -16,8 +16,9 @@
 
 /*
   This version is heavily modified internally by STEMIST MSE 2023 Team.
-    - Disabled nitro-like speed boost and switch driving mode.
+    - Disabled switch driving mode so only 2-analog driving mode is used.
     - Add additional motor control and servo control.
+    - Add a Control Panel for monitoring.
   Written by B4iter - STEMIST MSE Gen 5
 */
 
@@ -54,10 +55,13 @@ const char *password = "stemistclub";
 
 const char *hostname = "stemist.mse";
 
-void nullCallback(Control *sender, int type) {
+void nullCallback(Control *sender, int type) {}
+void addMotorControlCallback(Control *sender, int type) {
+  Serial.print("Slider: ID: ");
+  Serial.print(sender->id);
+  Serial.print(", Value: ");
 }
-
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor;
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -67,9 +71,7 @@ void initPanel() {
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
   WiFi.softAP(ssid,password);
-
   dnsServer.start(DNS_PORT, "*", apIP);
-
   Serial.println("\n\nWiFi parameters:");
   Serial.print("Mode: ");
   Serial.println(WiFi.getMode() == WIFI_AP ? "Station" : "Client");
@@ -102,9 +104,14 @@ void initPanel() {
   servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, servo1pos);
   ESPUI.addControl(Max, "", "180", None, servo1pos);
-  auto configtab = ESPUI.addControl(Tab, "About", "About");
+  auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
+  addMotorControl = ESPUI.addControl(ControlType::Slider, "Additional Motor Speed", String(addMotorSpeed), Alizarin, maintab, addMotorControlCallback);
+  ESPUI.addControl(Min, "", "0", None, addMotorControl);
+  ESPUI.addControl(Max, "", "4095", None, addMotorControl);
+  auto abouttab = ESPUI.addControl(Tab, "About", "About");
   //Make sliders continually report their position as they are being dragged.
-  ESPUI.begin("STEMIST MSE - VRC 2023 Debug Panel");
+  ESPUI.sliderContinuous = true;
+  ESPUI.begin("STEMIST MSE - VRC 2023 Control Panel");
 }
 
 void additionalMotor(unsigned int motor, int val) {
