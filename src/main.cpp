@@ -55,7 +55,6 @@ const char *password = "stemistclub";
 
 const char *hostname = "stemist.mse";
 
-void nullCallback(Control *sender, int type) {}
 void addMotorControlCallback(Control *sender, int type) {
   Serial.print("Slider: ID: ");
   Serial.print(sender->id);
@@ -64,7 +63,7 @@ void addMotorControlCallback(Control *sender, int type) {
   Serial.print(switchval);
   addMotorSpeed = switchval;
 }
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning;
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -83,39 +82,46 @@ void initPanel() {
   // Debug Panel Begin here. 
   auto maintab = ESPUI.addControl(Tab, "Verbose", "Verbose");
   ESPUI.addControl(ControlType::Separator, "Main motors status", "", ControlColor::None, maintab);
-  sliMaxMotor = ESPUI.addControl(ControlType::Slider, "Max Motor Power", getMotorOutput(5), Alizarin, maintab, nullCallback);
+  sliMaxMotor = ESPUI.addControl(ControlType::Slider, "Max Motor Power", getMotorOutput(5), Peterriver, maintab);
   ESPUI.addControl(Min, "", "0", None, sliMaxMotor);
   ESPUI.addControl(Max, "", "100", None, sliMaxMotor);
-  PWMMotor1s1 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin A", getMotorOutput(1), Alizarin, maintab, nullCallback);
+  PWMMotor1s1 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin A", getMotorOutput(1), Alizarin, maintab);
   ESPUI.addControl(Min, "", "0", None, PWMMotor1s1);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor1s1);
-  PWMMotor1s2 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin B", getMotorOutput(2), Alizarin, maintab, nullCallback);
+  PWMMotor1s2 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin B", getMotorOutput(2), Emerald, maintab);
   ESPUI.addControl(Min, "", "0", None, PWMMotor1s2);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor1s2);
-  PWMMotor2s1 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin A", getMotorOutput(3), Alizarin, maintab, nullCallback);
+  PWMMotor2s1 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin A", getMotorOutput(3), Alizarin, maintab);
   ESPUI.addControl(Min, "", "0", None, PWMMotor2s1);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor2s1);
-  PWMMotor2s2 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin B", getMotorOutput(1), Alizarin, maintab, nullCallback);
+  PWMMotor2s2 = ESPUI.addControl(ControlType::Slider, "Motor 2 Pin B", getMotorOutput(1), Emerald, maintab);
   ESPUI.addControl(Min, "", "0", None, PWMMotor2s2);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor2s2);
   ESPUI.addControl(ControlType::Separator, "Additional Motors Status", "", ControlColor::None, maintab);
-  PWMMotor3s1 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin A", "0", Alizarin, maintab, nullCallback);
-  PWMMotor3s2 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin B", "0", Alizarin, maintab, nullCallback);
-  PWMMotor4s1 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin A", "0", Alizarin, maintab, nullCallback);
-  PWMMotor4s2 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin B", "0", Alizarin, maintab, nullCallback);
+  PWMMotor3s1 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin A", "0", Alizarin, maintab);
+  PWMMotor3s2 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin B", "0", Emerald, maintab);
+  PWMMotor4s1 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin A", "0", Alizarin, maintab);
+  PWMMotor4s2 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin B", "0", Emerald, maintab);
   ESPUI.addControl(ControlType::Separator, "Servo Status", "", ControlColor::None, maintab);
-  servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab, nullCallback);
+  servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab);
   ESPUI.addControl(Min, "", "0", None, servo1pos);
   ESPUI.addControl(Max, "", "180", None, servo1pos);
   auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
-  addMotorControl = ESPUI.addControl(ControlType::Slider, "Additional Motor Speed", String(addMotorSpeed), Alizarin, configtab, addMotorControlCallback);
+  disabledWarning = ESPUI.addControl(Label,"Warning","This configuration tab is disabled from controller <br> Please reboot the machine to unlock it",ControlColor::Alizarin,configtab);
+  configWarning = ESPUI.addControl(Label,"Warning","Only use this if you know what you're doing",ControlColor::Alizarin,configtab);
+  addMotorControl = ESPUI.addControl(ControlType::Slider, "Additional Motor Speed", String(addMotorSpeed), Peterriver, configtab, addMotorControlCallback);
   ESPUI.addControl(Min, "", "0", None, addMotorControl);
   ESPUI.addControl(Max, "", "4095", None, addMotorControl);
-  configWarning = ESPUI.addControl(Label,"Warning","Only use this if you know what you're doing",ControlColor::Peterriver,configtab,nullCallback);
   auto abouttab = ESPUI.addControl(Tab, "About", "About");
+  teamsection1 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Official Team Members <br> Nguyen Minh Thai (Leader) <br> Dang Duy Khanh (Co-Leader) <br> Ha Tien Trieu <br> Khuat Dang Quang <br> Khuat Thi Khanh Ly <br> Kieu Nhat Linh <br> Nguyen Quang Minh",Emerald,abouttab);
+  teamsection2 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Members - Contributor <br> Nguyen Hong Quang <br> Tran Tuan Duong <br> Nguyen Gia Huy <br> Pham Quoc Thinh ",Emerald,abouttab);
+  specialthanks = ESPUI.addControl(Label,"Special Thanks to","Vu Quoc Khanh <br> Ha Thai Son <br> Nguyen Phuong Linh <br> Nguyen Ba Khoa <br> For your precious contribution to our team.",Emerald,abouttab);
+  authorsection = ESPUI.addControl(Label,"Author", "Nguyen Minh Thai a.k.a B4iter (@b4iterdev)",Emerald,abouttab);
+  creditsection = ESPUI.addControl(Label,"Credit", "Nguyen Minh Thai a.k.a B4iter (@b4iterdev) <br> Tu Dang - Makerviet <br> s00500 - ESPUI Library",Emerald,abouttab);
+  ESPUI.updateVisibility(disabledWarning, false);
   //Make sliders continually report their position as they are being dragged.
   ESPUI.sliderContinuous = true;
-  ESPUI.begin("STEMIST MSE - VRC 2023 Control Panel");
+  ESPUI.begin("Stemist Club MSE - VRC 2023 Control Panel");
 }
 
 void additionalMotor(unsigned int motor, int val) {
@@ -218,10 +224,12 @@ if (ps2x.ButtonReleased(PSB_PAD_LEFT) || ps2x.ButtonReleased(PSB_PAD_RIGHT)) {
 } 
 
 void configtabDisable() {
-  ESPUI.setPanelStyle(addMotorControl, ";");
   ESPUI.setEnabled(addMotorControl, false);
   const String disabledstyle = "background-color: #bbb; border-bottom: #999 3px solid;";
   ESPUI.setPanelStyle(addMotorControl, disabledstyle);
+  ESPUI.updateVisibility(disabledWarning, true);
+  addMotorSpeed = 4095;
+  ESPUI.updateSlider(addMotorControl,addMotorSpeed);
 }
 
 void setup()
