@@ -4,7 +4,6 @@
 
 #define MIN_PWM 0
 #define MAX_PWM 4095
-#define DEBUG
 // PWM channels of pca9685 0-16
 #define PWM_CHANNEL1 8
 #define PWM_CHANNEL2 9

@@ -40,58 +40,6 @@
 #define PWM_CHANNEL8 15
 
 unsigned int addMotorSpeed = 4095;
-int motor3s = 0;
-int motor4s = 0;
-
-void additionalMotor() {
-  if (motor3s == 1) {
-    pwm.setPWM(PWM_CHANNEL5,0,addMotorSpeed);
-    pwm.setPWM(PWM_CHANNEL6,0,0);
-    return;
-  } else if (motor4s == 1) {
-    pwm.setPWM(PWM_CHANNEL7,0,addMotorSpeed);
-    pwm.setPWM(PWM_CHANNEL8,0,0);
-    return;
-  } else if(motor3s == -1) {
-    pwm.setPWM(PWM_CHANNEL5,0,0);
-    pwm.setPWM(PWM_CHANNEL6,0,addMotorSpeed);
-    return;
-  } else if(motor4s == -1) {
-    pwm.setPWM(PWM_CHANNEL7,0,0);
-    pwm.setPWM(PWM_CHANNEL8,0,addMotorSpeed);
-    return;
-  } else if (motor3s == 0) {
-    pwm.setPWM(PWM_CHANNEL5,0,0);
-    pwm.setPWM(PWM_CHANNEL6,0,0);
-    return;
-  } else if (motor4s == 0) {
-    pwm.setPWM(PWM_CHANNEL7,0,0);
-    pwm.setPWM(PWM_CHANNEL8,0,0);
-    return;
-  }
-}
-
-void additionalMotorInput() {
-  if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    motor3s = 1;
-    additionalMotor();
-  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    motor4s = 1;
-    additionalMotor();
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    motor3s = -1;
-    additionalMotor();
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    motor4s = -1;
-    additionalMotor();
-  } else if(ps2x.ButtonPressed(PSB_CROSS)) {
-    motor3s = 0;
-    additionalMotor();
-  } else if(ps2x.ButtonPressed(PSB_CIRCLE)) {
-    motor4s = 0;
-    additionalMotor();
-  }
-}
 
 // define desired servo position, it must be configured manually and applied before duty cycle implementation.
 int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
@@ -116,36 +64,10 @@ void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
   WiFi.setHostname(hostname);
   WiFi.begin(ssid, password);
-  Serial.print("\n\nTry to connect to existing network");
-  {
-    uint8_t timeout = 10;
-    // Wait for connection, 5s timeout
-    do
-    {
-      delay(500);
-      Serial.print(".");
-      timeout--;
-    } while (timeout && WiFi.status() != WL_CONNECTED);
-
-    // not connected -> create hotspot
-    if (WiFi.status() != WL_CONNECTED)
-    {
-      Serial.print("\n\nCreating hotspot");
-
-      WiFi.mode(WIFI_AP);
-      WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-      WiFi.softAP(ssid,password);
-
-      timeout = 5;
-
-      do
-      {
-        delay(500);
-        Serial.print(".");
-        timeout--;
-      } while (timeout);
-    }
-  }
+  Serial.print("\n\nCreating hotspot");
+  WiFi.mode(WIFI_AP);
+  WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
+  WiFi.softAP(ssid,password);
 
   dnsServer.start(DNS_PORT, "*", apIP);
 
@@ -155,7 +77,7 @@ void initPanel() {
   Serial.print("IP address: ");
   Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
   // Debug Panel Begin here. 
-  auto maintab = ESPUI.addControl(Tab, "Debug Info", "Debug Info");
+  auto maintab = ESPUI.addControl(Tab, "Verbose", "Verbose");
   ESPUI.addControl(ControlType::Separator, "Main motors status", "", ControlColor::None, maintab);
   PWMMotor1s1 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin A", getMotorOutput(1), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, PWMMotor1s1);
@@ -170,18 +92,88 @@ void initPanel() {
   ESPUI.addControl(Min, "", "0", None, PWMMotor2s2);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor2s2);
   ESPUI.addControl(ControlType::Separator, "Additional Motors Status", "", ControlColor::None, maintab);
-  PWMMotor3s1 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin A", String(motor3s == 1), Alizarin, maintab, nullCallback);
-  PWMMotor3s2 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin B", String(motor3s == -1), Alizarin, maintab, nullCallback);
-  PWMMotor4s1 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin A", String(motor4s == 1), Alizarin, maintab, nullCallback);
-  PWMMotor4s2 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin B", String(motor4s == -1), Alizarin, maintab, nullCallback);
+  PWMMotor3s1 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin A", "0", Alizarin, maintab, nullCallback);
+  PWMMotor3s2 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin B", "0", Alizarin, maintab, nullCallback);
+  PWMMotor4s1 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin A", "0", Alizarin, maintab, nullCallback);
+  PWMMotor4s2 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin B", "0", Alizarin, maintab, nullCallback);
   ESPUI.addControl(ControlType::Separator, "Servo Status", "", ControlColor::None, maintab);
   servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, servo1pos);
   ESPUI.addControl(Max, "", "180", None, servo1pos);
-  auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
+  auto configtab = ESPUI.addControl(Tab, "About", "About");
   //Make sliders continually report their position as they are being dragged.
-  ESPUI.sliderContinuous = true;
   ESPUI.begin("STEMIST MSE - VRC 2023 Debug Panel");
+}
+
+void additionalMotor(unsigned int motor, int val) {
+  switch (motor) {
+    case 3:
+    switch(val) {
+      case 1:
+      pwm.setPWM(PWM_CHANNEL5,0,addMotorSpeed);
+      pwm.setPWM(PWM_CHANNEL6,0,0);
+      ESPUI.updateSwitcher(PWMMotor3s1,1);
+      ESPUI.updateSwitcher(PWMMotor3s2,0);
+      break;
+      case -1:
+      pwm.setPWM(PWM_CHANNEL5,0,0);
+      pwm.setPWM(PWM_CHANNEL6,0,addMotorSpeed);
+      ESPUI.updateSwitcher(PWMMotor3s1,0);
+      ESPUI.updateSwitcher(PWMMotor3s2,1);
+      break;
+      case 0:
+      pwm.setPWM(PWM_CHANNEL5,0,0);
+      pwm.setPWM(PWM_CHANNEL6,0,0);
+      ESPUI.updateSwitcher(PWMMotor3s1,0);
+      ESPUI.updateSwitcher(PWMMotor3s2,0);
+      break;
+    }
+    break;
+    case 4:
+    switch(val) {
+      case 1:
+      pwm.setPWM(PWM_CHANNEL7,0,addMotorSpeed);
+      pwm.setPWM(PWM_CHANNEL8,0,0);
+      ESPUI.updateSwitcher(PWMMotor4s1,1);
+      ESPUI.updateSwitcher(PWMMotor4s2,0);
+      break;
+      case -1:
+      pwm.setPWM(PWM_CHANNEL7,0,0);
+      pwm.setPWM(PWM_CHANNEL8,0,addMotorSpeed);
+      ESPUI.updateSwitcher(PWMMotor4s1,0);
+      ESPUI.updateSwitcher(PWMMotor4s2,1);
+      break;
+      case 0:
+      pwm.setPWM(PWM_CHANNEL7,0,0);
+      pwm.setPWM(PWM_CHANNEL8,0,0);
+      ESPUI.updateSwitcher(PWMMotor4s1,0);
+      ESPUI.updateSwitcher(PWMMotor4s2,0);
+      break;
+    }
+    break;
+  }
+}
+
+void additionalMotorInput() {
+  if (!ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_SQUARE)) {
+    additionalMotor(3,1);
+    return;
+  } else if (!ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_TRIANGLE)) {
+    additionalMotor(4,1);
+    return;
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_SQUARE)) {
+    additionalMotor(3,-1);
+    return;
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_TRIANGLE)) {
+    additionalMotor(4,-1);
+    return;
+  } else if(ps2x.Button(PSB_CROSS)) {
+    additionalMotor(4,0);
+    return;
+  } else if(ps2x.Button(PSB_CIRCLE)) {
+    additionalMotor(3,0);
+    return;
+  }
 }
 
 void updateRequest() {
@@ -190,11 +182,6 @@ void updateRequest() {
   ESPUI.updateSlider(PWMMotor1s2,getMotorOutput(2).toInt());
   ESPUI.updateSlider(PWMMotor2s1,getMotorOutput(3).toInt());
   ESPUI.updateSlider(PWMMotor2s2,getMotorOutput(4).toInt());
-  ESPUI.updateSwitcher(PWMMotor3s1,motor3s == 1);
-  ESPUI.updateSwitcher(PWMMotor3s2,motor3s == -1);
-  ESPUI.updateSwitcher(PWMMotor4s1,motor4s == 1);
-  ESPUI.updateSwitcher(PWMMotor4s2,motor4s == -1);
-  ESPUI.updateSlider(servo1pos,servo1_pos);
 }
 
 void servoControl(){
@@ -202,34 +189,19 @@ if (ps2x.ButtonReleased(PSB_PAD_LEFT) || ps2x.ButtonReleased(PSB_PAD_RIGHT)) {
     servo1_pos = 90;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
+    ESPUI.updateSlider(servo1pos,servo1_pos);
   } else if (ps2x.Button(PSB_PAD_RIGHT)) {
     servo1_pos = 30;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
+    ESPUI.updateSlider(servo1pos,servo1_pos);
   } else if (ps2x.Button(PSB_PAD_LEFT)) {
     servo1_pos = 150;
     long servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
     pwm.setPWM(2,0,servo1);
-  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    pwm.setPWM(PWM_CHANNEL5,0,4095);
-    pwm.setPWM(PWM_CHANNEL6,0,0);
-  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    pwm.setPWM(PWM_CHANNEL7,0,4095);
-    pwm.setPWM(PWM_CHANNEL8,0,0);
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
-    pwm.setPWM(PWM_CHANNEL5,0,0);
-    pwm.setPWM(PWM_CHANNEL6,0,4095);
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
-    pwm.setPWM(PWM_CHANNEL7,0,0);
-    pwm.setPWM(PWM_CHANNEL8,0,4095);
-  } else if (ps2x.ButtonPressed(PSB_CIRCLE)) {
-    pwm.setPWM(PWM_CHANNEL5,0,0);
-    pwm.setPWM(PWM_CHANNEL6,0,0);
-  } else if (ps2x.ButtonPressed(PSB_CROSS)) {
-    pwm.setPWM(PWM_CHANNEL7,0,0);
-    pwm.setPWM(PWM_CHANNEL8,0,0);
+    ESPUI.updateSlider(servo1pos,servo1_pos);
   }
-  } 
+} 
 
 void setup()
 {

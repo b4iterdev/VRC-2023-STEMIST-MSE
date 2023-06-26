@@ -1,6 +1,5 @@
 #include <PS2X_lib.h>
 PS2X ps2x; // create PS2 Controller Class object
-#define DEBUG
 
 // calibration for different kinds of PS2 controller, this value only suitable for the PS2 controller comes with VRC2023 K12 Maker kit 
 #define X_JOY_CALIB 127
