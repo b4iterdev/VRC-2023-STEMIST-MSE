@@ -40,7 +40,6 @@
 #define PWM_CHANNEL8 15
 
 unsigned int addMotorSpeed = 4095;
-
 // define desired servo position, it must be configured manually and applied before duty cycle implementation.
 int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
 // duty cycle implementation.
@@ -58,7 +57,7 @@ const char *hostname = "stemist.mse";
 void nullCallback(Control *sender, int type) {
 }
 
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2;
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -79,6 +78,9 @@ void initPanel() {
   // Debug Panel Begin here. 
   auto maintab = ESPUI.addControl(Tab, "Verbose", "Verbose");
   ESPUI.addControl(ControlType::Separator, "Main motors status", "", ControlColor::None, maintab);
+  sliMaxMotor = ESPUI.addControl(ControlType::Slider, "Max Motor Power", getMotorOutput(5), Alizarin, maintab, nullCallback);
+  ESPUI.addControl(Min, "", "0", None, sliMaxMotor);
+  ESPUI.addControl(Max, "", "100", None, sliMaxMotor);
   PWMMotor1s1 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin A", getMotorOutput(1), Alizarin, maintab, nullCallback);
   ESPUI.addControl(Min, "", "0", None, PWMMotor1s1);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor1s1);
@@ -182,6 +184,7 @@ void updateRequest() {
   ESPUI.updateSlider(PWMMotor1s2,getMotorOutput(2).toInt());
   ESPUI.updateSlider(PWMMotor2s1,getMotorOutput(3).toInt());
   ESPUI.updateSlider(PWMMotor2s2,getMotorOutput(4).toInt());
+  ESPUI.updateSlider(sliMaxMotor,getMotorOutput(5).toInt());
 }
 
 void servoControl(){

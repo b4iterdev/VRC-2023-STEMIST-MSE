@@ -106,6 +106,9 @@ String getMotorOutput(unsigned int num) {
     case 4:
     return String(c4);
     break;
+    case 5:
+    unsigned int perMaxMotor = map(speed,0,4095,0,100);
+    return String(perMaxMotor);
   } 
   return "Error";
 }
