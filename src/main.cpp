@@ -63,7 +63,17 @@ void addMotorControlCallback(Control *sender, int type) {
   Serial.print(switchval);
   addMotorSpeed = switchval;
 }
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks;
+void espActionCallback(Control *sender, int type) {
+  Serial.print("Button: ID: ");
+  Serial.print(sender->id);
+  switch (sender->id) {
+    case 33:
+    Serial.print("ESP is now cleanly restarting...");
+    ESP.restart();
+    break;
+  }
+}
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,espAction;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -85,6 +95,7 @@ void initPanel() {
   sliMaxMotor = ESPUI.addControl(ControlType::Slider, "Max Motor Power", getMotorOutput(5), Peterriver, maintab);
   ESPUI.addControl(Min, "", "0", None, sliMaxMotor);
   ESPUI.addControl(Max, "", "100", None, sliMaxMotor);
+  ESPUI.setPanelWide(sliMaxMotor, true);
   PWMMotor1s1 = ESPUI.addControl(ControlType::Slider, "Motor 1 Pin A", getMotorOutput(1), Alizarin, maintab);
   ESPUI.addControl(Min, "", "0", None, PWMMotor1s1);
   ESPUI.addControl(Max, "", "4096", None, PWMMotor1s1);
@@ -109,9 +120,13 @@ void initPanel() {
   auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
   disabledWarning = ESPUI.addControl(Label,"Warning","This configuration tab is disabled from controller <br> Please reboot the machine to unlock it",ControlColor::Alizarin,configtab);
   configWarning = ESPUI.addControl(Label,"Warning","Only use this if you know what you're doing",ControlColor::Alizarin,configtab);
+  ESPUI.setPanelWide(configWarning, true);
   addMotorControl = ESPUI.addControl(ControlType::Slider, "Additional Motor Speed", String(addMotorSpeed), Peterriver, configtab, addMotorControlCallback);
   ESPUI.addControl(Min, "", "0", None, addMotorControl);
   ESPUI.addControl(Max, "", "4095", None, addMotorControl);
+  ESPUI.setPanelWide(addMotorControl, true);
+  espAction = ESPUI.addControl(Button,"ESP32 Maintainance","Restart ESP32",ControlColor::Turquoise,configtab,espActionCallback);
+  //ESPUI.addControl(Button,"","Reset ESP32",ControlColor::None,espAction,espActionCallback);
   auto abouttab = ESPUI.addControl(Tab, "About", "About");
   teamsection1 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Official Team Members <br> Nguyen Minh Thai (Leader) <br> Dang Duy Khanh (Co-Leader) <br> Ha Tien Trieu <br> Khuat Dang Quang <br> Khuat Thi Khanh Ly <br> Kieu Nhat Linh <br> Nguyen Quang Minh",Emerald,abouttab);
   teamsection2 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Members - Contributor <br> Nguyen Hong Quang <br> Tran Tuan Duong <br> Nguyen Gia Huy <br> Pham Quoc Thinh ",Emerald,abouttab);
