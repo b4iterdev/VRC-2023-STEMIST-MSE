@@ -50,7 +50,7 @@ const byte DNS_PORT = 53;
 IPAddress apIP(192, 168, 4, 1);
 DNSServer dnsServer;
 
-const char *ssid = "STEMIST MSE";
+const char *ssid = "Stemist Club MSE";
 const char *password = "stemistclub";
 
 const char *hostname = "stemist.mse";
