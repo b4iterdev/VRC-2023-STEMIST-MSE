@@ -71,9 +71,13 @@ void espActionCallback(Control *sender, int type) {
     Serial.print("ESP is now cleanly restarting...");
     ESP.restart();
     break;
+    case 34:
+    Serial.print("PCA9685 is now resetting...");
+    pwm.reset();
+    break;
   }
 }
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,espAction;
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,boardAction;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -125,8 +129,8 @@ void initPanel() {
   ESPUI.addControl(Min, "", "0", None, addMotorControl);
   ESPUI.addControl(Max, "", "4095", None, addMotorControl);
   ESPUI.setPanelWide(addMotorControl, true);
-  espAction = ESPUI.addControl(Button,"ESP32 Maintainance","Restart ESP32",ControlColor::Turquoise,configtab,espActionCallback);
-  //ESPUI.addControl(Button,"","Reset ESP32",ControlColor::None,espAction,espActionCallback);
+  boardAction = ESPUI.addControl(Button,"Maintainance","Restart ESP32",ControlColor::Turquoise,configtab,espActionCallback);
+  ESPUI.addControl(Button,"","Reset PCA9685",ControlColor::None,boardAction,espActionCallback);
   auto abouttab = ESPUI.addControl(Tab, "About", "About");
   teamsection1 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Official Team Members <br> Nguyen Minh Thai (Leader) <br> Dang Duy Khanh (Co-Leader) <br> Ha Tien Trieu <br> Khuat Dang Quang <br> Khuat Thi Khanh Ly <br> Kieu Nhat Linh <br> Nguyen Quang Minh",Emerald,abouttab);
   teamsection2 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Members - Contributor <br> Nguyen Hong Quang <br> Tran Tuan Duong <br> Nguyen Gia Huy <br> Pham Quoc Thinh ",Emerald,abouttab);
