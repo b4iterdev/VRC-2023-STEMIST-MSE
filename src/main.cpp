@@ -249,6 +249,8 @@ void configtabDisable() {
   ESPUI.updateVisibility(disabledWarning, true);
   addMotorSpeed = 4095;
   ESPUI.updateSlider(addMotorControl,addMotorSpeed);
+  ESPUI.setEnabled(boardAction, false);
+  ESPUI.setPanelStyle(boardAction, disabledstyle);
 }
 
 void setup()
