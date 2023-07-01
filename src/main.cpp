@@ -5,6 +5,7 @@
 #include <ESPUI.h>
 #include <Wire.h>
 #include <WiFi.h>
+#include "ultraSen.h"
 /*
  * A better version of MakerBotwPS2 example used with makerbot BANHMI hardware platform
  * This version simplify the joystick driving method, where the functionality stay the same.
@@ -45,6 +46,7 @@ unsigned int addMotorSpeed = 4095;
 int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
 // duty cycle implementation.
 //int servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
+unsigned int ultraSensorStartTracking = 0;
 
 const byte DNS_PORT = 53;
 IPAddress apIP(192, 168, 4, 1);
@@ -73,7 +75,18 @@ void espActionCallback(Control *sender, int type) {
     break;
   }
 }
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,espAction;
+void ultraMainCallback(Control *sender, int type) {
+  int switchval = sender->value.toInt();
+  switch (switchval) {
+    case 0:
+      ultraSensorStartTracking = 0;
+      break;
+    case 1: 
+      ultraSensorStartTracking = 1;
+      break;
+  }
+}
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,espAction,ultraMainSwitch,ultraDistance;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -113,10 +126,12 @@ void initPanel() {
   PWMMotor3s2 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin B", "0", Emerald, maintab);
   PWMMotor4s1 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin A", "0", Alizarin, maintab);
   PWMMotor4s2 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin B", "0", Emerald, maintab);
-  ESPUI.addControl(ControlType::Separator, "Servo Status", "", ControlColor::None, maintab);
+  ESPUI.addControl(ControlType::Separator, "Servo and UltraSonic Sensor Status", "", ControlColor::None, maintab);
   servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab);
   ESPUI.addControl(Min, "", "0", None, servo1pos);
   ESPUI.addControl(Max, "", "180", None, servo1pos);
+  ultraDistance = ESPUI.addControl(Label,"UltraSonic Distance",String(getDistance()),Alizarin,maintab);
+
   auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
   disabledWarning = ESPUI.addControl(Label,"Warning","This configuration tab is disabled from controller <br> Please reboot the machine to unlock it",ControlColor::Alizarin,configtab);
   configWarning = ESPUI.addControl(Label,"Warning","Only use this if you know what you're doing",ControlColor::Alizarin,configtab);
@@ -127,6 +142,9 @@ void initPanel() {
   ESPUI.setPanelWide(addMotorControl, true);
   espAction = ESPUI.addControl(Button,"ESP32 Maintainance","Restart ESP32",ControlColor::Turquoise,configtab,espActionCallback);
   //ESPUI.addControl(Button,"","Reset ESP32",ControlColor::None,espAction,espActionCallback);
+  ESPUI.addControl(ControlType::Separator, "Ultrasonic Configuration", "", ControlColor::None, configtab);
+  ultraMainSwitch = ESPUI.addControl(ControlType::Switcher, "Start / Stop", "0", Alizarin, configtab,ultraMainCallback);
+  
   auto abouttab = ESPUI.addControl(Tab, "About", "About");
   teamsection1 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Official Team Members <br> Nguyen Minh Thai (Leader) <br> Dang Duy Khanh (Co-Leader) <br> Ha Tien Trieu <br> Khuat Dang Quang <br> Khuat Thi Khanh Ly <br> Kieu Nhat Linh <br> Nguyen Quang Minh",Emerald,abouttab);
   teamsection2 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Members - Contributor <br> Nguyen Hong Quang <br> Tran Tuan Duong <br> Nguyen Gia Huy <br> Pham Quoc Thinh ",Emerald,abouttab);
@@ -217,6 +235,7 @@ void updateRequest() {
   ESPUI.updateSlider(PWMMotor2s1,getMotorOutput(3).toInt());
   ESPUI.updateSlider(PWMMotor2s2,getMotorOutput(4).toInt());
   ESPUI.updateSlider(sliMaxMotor,getMotorOutput(5).toInt());
+  ESPUI.updateLabel(ultraDistance,String(getDistance()));
 }
 
 void servoControl(){
@@ -252,6 +271,7 @@ void setup()
   Serial.begin(115200);
   initMotors();
   setupPS2controller();
+  initSensor();
   initPanel();
   Serial.println("Done setup!");
 }
@@ -260,6 +280,10 @@ void loop()
 {
   ps2x.read_gamepad(0, 0);
   PS2control();
+  while (ultraSensorStartTracking == 1) {
+    trackSen();
+    break;
+  }
   if(ps2x.ButtonPressed(PSB_START)) {
     configtabDisable();
   }

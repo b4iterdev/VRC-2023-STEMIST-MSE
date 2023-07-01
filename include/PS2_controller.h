@@ -29,9 +29,9 @@ void setupPS2controller()
 }
 bool PS2control()
 {
-  if (ps2x.Button(PSB_R1)) {
+  if (ps2x.Button(PSB_L1)) {
     speed = TOP_SPEED;
-  } else if (ps2x.Button(PSB_L1)) {
+  } else if (ps2x.Button(PSB_R1)) {
     speed = PRECISE_SPEED;
   } else {
     speed = NORM_SPEED;
