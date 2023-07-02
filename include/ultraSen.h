@@ -4,7 +4,6 @@
 #define trigPin1 0
 #define echoPin1 0
 
-long temp;
 long duration, distance;
 
 void initSensor() {
@@ -22,24 +21,14 @@ void trackSen() {
   // Read the signal from the sensor: a HIGH pulse whose 
   // duration is the time (in microseconds) from the sending 
   // of the ping to the reception of its echo off of an object. 
+  noInterrupts();
   duration = pulseIn(echoPin1, HIGH);
-  distance = ((duration *331.3 + 0.606 * temp) / 2 );
+  interrupts();
+  distance = ((duration ) / 2 );
   #ifdef DEBUG
   Serial.print("Distance: ");
   Serial.println(distance);
   #endif
-}
-
-int opTemp(int action,long target) {
-    switch(action) {
-        case 0:
-            temp = target;
-            return 0;
-            break;
-        case 1:
-            return temp;
-            break;
-    }
 }
 
 long getDistance() {

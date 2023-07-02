@@ -47,6 +47,7 @@ int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
 // duty cycle implementation.
 //int servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
 unsigned int ultraSensorStartTracking = 0;
+float minThreshold1,maxThreshold1;
 
 const byte DNS_PORT = 53;
 IPAddress apIP(192, 168, 4, 1);
@@ -90,7 +91,23 @@ void ultraMainCallback(Control *sender, int type) {
       break;
   }
 }
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,boardAction,ultraMainSwitch,ultraDistance;
+void thresholdCallback(Control *sender, int type) {
+  Serial.print("Button: ID: ");
+  Serial.print(sender->id);
+  Serial.print(", Value: ");
+  float switchval = sender->value.toFloat();
+  Serial.print(switchval);
+  switch (sender->id) {
+    case 33:
+      minThreshold1 = switchval;
+    break;
+    case 34:
+      maxThreshold1 = switchval;
+    break;
+  }
+}
+
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,boardAction,ultraMainSwitch,ultraDistance,maxThresholdControl1,minThresholdControl1,maxThresholdVerbose1,minThresholdVerbose1,desiredDistance1;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -135,7 +152,9 @@ void initPanel() {
   ESPUI.addControl(Min, "", "0", None, servo1pos);
   ESPUI.addControl(Max, "", "180", None, servo1pos);
   ultraDistance = ESPUI.addControl(Label,"UltraSonic Distance",String(getDistance()),Alizarin,maintab);
-
+  minThresholdVerbose1 = ESPUI.addControl(Label,"Minimum Distant Threshold","0",Emerald,maintab);
+  maxThresholdVerbose1 = ESPUI.addControl(Label,"Maximum Distant Threshold","0",Alizarin,maintab);
+  desiredDistance1 = ESPUI.addControl(Label,"Case 1","Negative",Alizarin,maintab);
   auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
   disabledWarning = ESPUI.addControl(Label,"Warning","This configuration tab is disabled from controller <br> Please reboot the machine to unlock it",ControlColor::Alizarin,configtab);
   configWarning = ESPUI.addControl(Label,"Warning","Only use this if you know what you're doing",ControlColor::Alizarin,configtab);
@@ -148,7 +167,8 @@ void initPanel() {
   ESPUI.addControl(Button,"","Reset PCA9685",ControlColor::None,boardAction,espActionCallback);
   ESPUI.addControl(ControlType::Separator, "Ultrasonic Configuration", "", ControlColor::None, configtab);
   ultraMainSwitch = ESPUI.addControl(ControlType::Switcher, "Start / Stop", "0", Alizarin, configtab,ultraMainCallback);
-  
+  minThresholdControl1 = ESPUI.addControl(Number,"Minimum Threshold","0",ControlColor::Turquoise,configtab,thresholdCallback);
+  maxThresholdControl1 = ESPUI.addControl(Number,"Maximum Threshold","0",ControlColor::Alizarin,configtab,thresholdCallback);
   auto abouttab = ESPUI.addControl(Tab, "About", "About");
   teamsection1 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Official Team Members <br> Nguyen Minh Thai (Leader) <br> Dang Duy Khanh (Co-Leader) <br> Ha Tien Trieu <br> Khuat Dang Quang <br> Khuat Thi Khanh Ly <br> Kieu Nhat Linh <br> Nguyen Quang Minh",Emerald,abouttab);
   teamsection2 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Members - Contributor <br> Nguyen Hong Quang <br> Tran Tuan Duong <br> Nguyen Gia Huy <br> Pham Quoc Thinh ",Emerald,abouttab);
@@ -240,6 +260,19 @@ void updateRequest() {
   ESPUI.updateSlider(PWMMotor2s2,getMotorOutput(4).toInt());
   ESPUI.updateSlider(sliMaxMotor,getMotorOutput(5).toInt());
   ESPUI.updateLabel(ultraDistance,String(getDistance()));
+  ESPUI.updateLabel(minThresholdVerbose1,String(minThreshold1));
+  ESPUI.updateLabel(maxThresholdVerbose1,String(maxThreshold1));
+}
+
+void checkForDesiredDistance() {
+  if (getDistance() >= minThreshold1 && getDistance() <= maxThreshold1)
+  {
+    ESPUI.updateLabel(desiredDistance1,"Positive");
+    ESPUI.setPanelStyle(desiredDistance1, "background-color: #01FE55; border-bottom: #1FD05A 3px solid;");
+  } else {
+    ESPUI.updateLabel(desiredDistance1,"Negative");
+    ESPUI.setPanelStyle(desiredDistance1,";");
+  }
 }
 
 void servoControl(){
@@ -288,6 +321,7 @@ void loop()
   PS2control();
   while (ultraSensorStartTracking == 1) {
     trackSen();
+    checkForDesiredDistance();
     break;
   }
   if(ps2x.ButtonPressed(PSB_START)) {
