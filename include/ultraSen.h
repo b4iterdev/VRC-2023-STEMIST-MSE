@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #define DEBUG
 // define Sensor 1 pinOut
-#define trigPin1 0
-#define echoPin1 0
+#define trigPin1 32
+#define echoPin1 36
 
 long duration, distance;
 
