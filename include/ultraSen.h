@@ -24,7 +24,7 @@ void trackSen() {
   noInterrupts();
   duration = pulseIn(echoPin1, HIGH);
   interrupts();
-  distance = ((duration ) / 2 );
+  distance = (duration*.0343)/2;  
   #ifdef DEBUG
   Serial.print("Distance: ");
   Serial.println(distance);
