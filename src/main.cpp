@@ -313,6 +313,7 @@ void setup()
   setupPS2controller();
   initSensor();
   initPanel();
+  pinMode(25,OUTPUT);
   Serial.println("Done setup!");
 }
 
@@ -327,6 +328,13 @@ void loop()
   }
   if(ps2x.ButtonPressed(PSB_START)) {
     configtabDisable();
+  }
+  if(ps2x.ButtonPressed(PSB_R2)) {
+    digitalWrite(25,HIGH);
+    Serial.print("Laser On");
+  } else if (ps2x.ButtonReleased(PSB_R2)) {
+    digitalWrite(25,LOW);
+    Serial.print("Laser off");
   }
   additionalMotorInput();
   servoControl();
