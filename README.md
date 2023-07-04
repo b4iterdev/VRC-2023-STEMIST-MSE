@@ -3,7 +3,7 @@ Official Repo for Vietnam Robotics Challenge 2023 by Stemist MSE team.
 
 This version is heavily modified internally by STEMIST MSE 2023 Team.
 
-    - Disabled switch driving mode so only 2-analog driving mode is used.
+    - Disable switch driving mode so only 2-analog driving mode is used.
 
     - Add additional motor control and servo control.
 
