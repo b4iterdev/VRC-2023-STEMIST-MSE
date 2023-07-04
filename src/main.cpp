@@ -31,6 +31,7 @@
 #define Servo_5_pin 3
 #define Servo_6_pin 2
 
+// Servo PWM Constants
 #define MIN_SERVO 93
 #define MAX_SERVO 600
 #define MAX_SERVO_RESERVE 200
@@ -41,14 +42,17 @@
 #define PWM_CHANNEL7 14
 #define PWM_CHANNEL8 15
 
+// define adjustable additional Motor Speed.
 unsigned int addMotorSpeed = 4095;
 // define desired servo position, it must be configured manually and applied before duty cycle implementation.
 int servo1_pos,servo2_pos,servo3_pos,servo4_pos,servo5_pos,servo6_pos;
 // duty cycle implementation.
 //int servo1 = map(servo1_pos, 0, 180, MIN_SERVO, MAX_SERVO);
+
 unsigned int ultraSensorStartTracking = 0;
 float minThreshold1,maxThreshold1;
 
+// configure softAP and DNS.
 const byte DNS_PORT = 53;
 IPAddress apIP(192, 168, 4, 1);
 DNSServer dnsServer;
@@ -58,6 +62,7 @@ const char *password = "stemistclub";
 
 const char *hostname = "stemist.mse";
 
+//This funtion will change addMotorSpeed varible as user change its value on slider.
 void addMotorControlCallback(Control *sender, int type) {
   Serial.print("Slider: ID: ");
   Serial.print(sender->id);
@@ -66,6 +71,7 @@ void addMotorControlCallback(Control *sender, int type) {
   Serial.print(switchval);
   addMotorSpeed = switchval;
 }
+//This funtion will react to ESP Action Button.
 void espActionCallback(Control *sender, int type) {
   Serial.print("Button: ID: ");
   Serial.print(sender->id);
@@ -80,6 +86,7 @@ void espActionCallback(Control *sender, int type) {
     break;
   }
 }
+
 void ultraMainCallback(Control *sender, int type) {
   int switchval = sender->value.toInt();
   switch (switchval) {
@@ -91,6 +98,7 @@ void ultraMainCallback(Control *sender, int type) {
       break;
   }
 }
+
 void thresholdCallback(Control *sender, int type) {
   Serial.print("Button: ID: ");
   Serial.print(sender->id);
@@ -182,6 +190,7 @@ void initPanel() {
   ESPUI.begin("Stemist Club MSE - VRC 2023 Control Panel");
 }
 
+// This funtion adjust additional motor speed.
 void additionalMotor(unsigned int motor, int val) {
   switch (motor) {
     case 3:
@@ -295,6 +304,9 @@ if (ps2x.ButtonReleased(PSB_PAD_LEFT) || ps2x.ButtonReleased(PSB_PAD_RIGHT)) {
   }
 } 
 
+// This is a safety feature
+// In case someone managed to access the AP and gain access to config panel, the controller can press START button which will completely disable config tab for the entire session
+// and reset those value to default.
 void configtabDisable() {
   ESPUI.setEnabled(addMotorControl, false);
   const String disabledstyle = "background-color: #bbb; border-bottom: #999 3px solid;";
