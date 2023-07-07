@@ -290,6 +290,14 @@ void additionalMotorInputTest() {
       break;
     }
     return;
+  } else if(ps2x.ButtonPressed(PSB_CROSS)) {
+    additionalMotor(4,0);
+    pressed2 = 0;
+    return;
+  } else if(ps2x.ButtonPressed(PSB_CIRCLE)) {
+    additionalMotor(3,0);
+    pressed1 = 0;
+    return;
   }
 }
 
