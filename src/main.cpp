@@ -285,7 +285,7 @@ void additionalMotorInputTest() {
       pressed2 = 1;
       break;
       case 1:
-      additionalMotor(4,-1);
+      additionalMotor(4,0);
       pressed2 = 0;
       break;
     }
