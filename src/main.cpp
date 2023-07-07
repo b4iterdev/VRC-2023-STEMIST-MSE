@@ -242,43 +242,51 @@ void additionalMotor(unsigned int motor, int val) {
 }
 
 void additionalMotorInputTest() {
-  if (!ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_SQUARE)) {
+  if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
     switch (pressed1) {
       case 0:
       additionalMotor(3,1);
+      pressed1 = 1;
       break;
       case 1:
       additionalMotor(3,0);
+      pressed1 = 0;
       break;
     }
     return;
-  } else if (!ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_TRIANGLE)) {
+  } else if (!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
     switch (pressed2) {
       case 0:
       additionalMotor(4,1);
+      pressed2 = 1;
       break;
       case 1:
       additionalMotor(4,0);
+      pressed2 = 0;
       break;
     }
     return;
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_SQUARE)) {
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_SQUARE)) {
     switch (pressed1) {
       case 0:
       additionalMotor(3,-1);
+      pressed1 = 1;
       break;
       case 1:
       additionalMotor(3,0);
+      pressed1 = 0;
       break;
     }
     return;
-  } else if(ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_TRIANGLE)) {
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_TRIANGLE)) {
     switch (pressed2) {
       case 0:
       additionalMotor(4,-1);
+      pressed2 = 1;
       break;
       case 1:
       additionalMotor(4,-1);
+      pressed2 = 0;
       break;
     }
     return;
