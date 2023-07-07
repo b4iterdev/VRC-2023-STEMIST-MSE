@@ -42,6 +42,7 @@
 #define PWM_CHANNEL7 14
 #define PWM_CHANNEL8 15
 
+bool pressed1 = 0,pressed2 = 0;
 // define adjustable additional Motor Speed.
 unsigned int addMotorSpeed = 4095;
 // define desired servo position, it must be configured manually and applied before duty cycle implementation.
@@ -183,7 +184,7 @@ void initPanel() {
   teamsection2 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Members - Contributor <br> Nguyen Hong Quang <br> Tran Tuan Duong <br> Nguyen Gia Huy <br> Pham Quoc Thinh ",Emerald,abouttab);
   specialthanks = ESPUI.addControl(Label,"Special Thanks to","Vu Quoc Khanh <br> Ha Thai Son <br> Nguyen Phuong Linh <br> Nguyen Ba Khoa <br> For your precious contribution to our team.",Emerald,abouttab);
   authorsection = ESPUI.addControl(Label,"Author", "Nguyen Minh Thai a.k.a B4iter (@b4iterdev)",Emerald,abouttab);
-  creditsection = ESPUI.addControl(Label,"Credit", "Nguyen Minh Thai a.k.a B4iter (@b4iterdev) <br> Tu Dang - Makerviet <br> s00500 - ESPUI Library",Emerald,abouttab);
+  creditsection = ESPUI.addControl(Label,"Credit", "Nguyen Minh Thai a.k.a B4iter (@b4iterdev) <br> Tu Dang - Makerviet - MakerbotwPS2 Author <br> s00500 - ESPUI Library Author",Emerald,abouttab);
   ESPUI.updateVisibility(disabledWarning, false);
   //Make sliders continually report their position as they are being dragged.
   ESPUI.sliderContinuous = true;
@@ -237,6 +238,50 @@ void additionalMotor(unsigned int motor, int val) {
       break;
     }
     break;
+  }
+}
+
+void additionalMotorInputTest() {
+  if (!ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_SQUARE)) {
+    switch (pressed1) {
+      case 0:
+      additionalMotor(3,1);
+      break;
+      case 1:
+      additionalMotor(3,0);
+      break;
+    }
+    return;
+  } else if (!ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_TRIANGLE)) {
+    switch (pressed2) {
+      case 0:
+      additionalMotor(4,1);
+      break;
+      case 1:
+      additionalMotor(4,0);
+      break;
+    }
+    return;
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_SQUARE)) {
+    switch (pressed1) {
+      case 0:
+      additionalMotor(3,-1);
+      break;
+      case 1:
+      additionalMotor(3,0);
+      break;
+    }
+    return;
+  } else if(ps2x.Button(PSB_SELECT) && ps2x.Button(PSB_TRIANGLE)) {
+    switch (pressed2) {
+      case 0:
+      additionalMotor(4,-1);
+      break;
+      case 1:
+      additionalMotor(4,-1);
+      break;
+    }
+    return;
   }
 }
 
@@ -348,7 +393,7 @@ void loop()
     digitalWrite(25,LOW);
     Serial.print("Laser off");
   }
-  additionalMotorInput();
+  additionalMotorInputTest();
   servoControl();
   updateRequest();
   delay(50);
