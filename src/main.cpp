@@ -116,7 +116,7 @@ void thresholdCallback(Control *sender, int type) {
   }
 }
 
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,boardAction,ultraMainSwitch,ultraDistance,maxThresholdControl1,minThresholdControl1,maxThresholdVerbose1,minThresholdVerbose1,desiredDistance1;
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,boardAction,ultraMainSwitch,ultraDistance,maxThresholdControl1,minThresholdControl1,maxThresholdVerbose1,minThresholdVerbose1,desiredDistance1,laserStatus;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -156,10 +156,11 @@ void initPanel() {
   PWMMotor3s2 = ESPUI.addControl(ControlType::Switcher, "Motor 3 Pin B", "0", Emerald, maintab);
   PWMMotor4s1 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin A", "0", Alizarin, maintab);
   PWMMotor4s2 = ESPUI.addControl(ControlType::Switcher, "Motor 4 Pin B", "0", Emerald, maintab);
-  ESPUI.addControl(ControlType::Separator, "Servo Status", "", ControlColor::None, maintab);
+  ESPUI.addControl(ControlType::Separator, "Servo and Peripheral Status", "", ControlColor::None, maintab);
   servo1pos = ESPUI.addControl(ControlType::Slider, "Servo 1", String(servo1_pos), Alizarin, maintab);
   ESPUI.addControl(Min, "", "0", None, servo1pos);
   ESPUI.addControl(Max, "", "180", None, servo1pos);
+  laserStatus = ESPUI.addControl(Switcher,"Laser Status","0",Emerald,maintab);
   auto configtab = ESPUI.addControl(Tab, "Configuration", "Configuration");
   disabledWarning = ESPUI.addControl(Label,"Warning","This configuration tab is disabled from controller <br> Please reboot the machine to unlock it",ControlColor::Alizarin,configtab);
   configWarning = ESPUI.addControl(Label,"Warning","Only use this if you know what you're doing",ControlColor::Alizarin,configtab);
@@ -182,7 +183,7 @@ void initPanel() {
   auto abouttab = ESPUI.addControl(Tab, "About", "About");
   teamsection1 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Official Team Members <br> Nguyen Minh Thai (Leader) <br> Dang Duy Khanh (Co-Leader) <br> Ha Tien Trieu <br> Khuat Dang Quang <br> Khuat Thi Khanh Ly <br> Kieu Nhat Linh <br> Nguyen Quang Minh",Emerald,abouttab);
   teamsection2 = ESPUI.addControl(Label,"About Stemist Club - VRC 2023 Team","Members - Contributor <br> Nguyen Hong Quang <br> Tran Tuan Duong <br> Nguyen Gia Huy <br> Pham Quoc Thinh ",Emerald,abouttab);
-  specialthanks = ESPUI.addControl(Label,"Special Thanks to","Vu Quoc Khanh <br> Ha Thai Son <br> Nguyen Phuong Linh <br> Nguyen Ba Khoa <br> For your precious contribution to our team.",Emerald,abouttab);
+  specialthanks = ESPUI.addControl(Label,"Special Thanks to","Vu Quoc Khanh <br> Ha Thai Son <br> Nguyen Phuong Linh <br> Nguyen Ba Khoa <br> Hoang Thanh Huong <br> Nguyen Tran Khanh Linh <br> For your precious contribution to our team.",Emerald,abouttab);
   authorsection = ESPUI.addControl(Label,"Author", "Nguyen Minh Thai a.k.a B4iter (@b4iterdev)",Emerald,abouttab);
   creditsection = ESPUI.addControl(Label,"Credit", "Nguyen Minh Thai a.k.a B4iter (@b4iterdev) <br> Tu Dang - Makerviet - MakerbotwPS2 Author <br> s00500 - ESPUI Library Author",Emerald,abouttab);
   ESPUI.updateVisibility(disabledWarning, false);
@@ -379,6 +380,12 @@ void configtabDisable() {
   ESPUI.setPanelStyle(boardAction, disabledstyle);
 }
 
+// Also a safety feature that will completely disable AP if controller press START button while holding SELECT
+void WiFIDisable() {
+  Serial.println("AP is now closing...");
+  WiFi.softAPdisconnect();
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -399,15 +406,17 @@ void loop()
     checkForDesiredDistance();
     break;
   }
-  if(ps2x.ButtonPressed(PSB_START)) {
+  if(!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_START)) {
     configtabDisable();
+  } else if (ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_START)) {
+    WiFIDisable();
   }
   if(ps2x.ButtonPressed(PSB_R2)) {
     digitalWrite(25,HIGH);
-    Serial.print("Laser On");
+    ESPUI.updateSwitcher(laserStatus,1);
   } else if (ps2x.ButtonReleased(PSB_R2)) {
     digitalWrite(25,LOW);
-    Serial.print("Laser off");
+    ESPUI.updateSwitcher(laserStatus,0);
   }
   additionalMotorInputTest();
   servoControl();
