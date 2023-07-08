@@ -42,6 +42,8 @@
 #define PWM_CHANNEL7 14
 #define PWM_CHANNEL8 15
 
+uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,boardAction,ultraMainSwitch,ultraDistance,maxThresholdControl1,minThresholdControl1,maxThresholdVerbose1,minThresholdVerbose1,desiredDistance1,laserStatus;
+
 bool pressed1 = 0,pressed2 = 0;
 // define adjustable additional Motor Speed.
 unsigned int addMotorSpeed = 4095;
@@ -107,16 +109,16 @@ void thresholdCallback(Control *sender, int type) {
   float switchval = sender->value.toFloat();
   Serial.print(switchval);
   switch (sender->id) {
-    case 33:
+    case 43:
       minThreshold1 = switchval;
+      ESPUI.updateLabel(minThresholdVerbose1,String(minThreshold1));
     break;
-    case 34:
+    case 44:
       maxThreshold1 = switchval;
+      ESPUI.updateLabel(maxThresholdVerbose1,String(maxThreshold1));
     break;
   }
 }
-
-uint16_t PWMMotor1s1,PWMMotor1s2,PWMMotor2s1,PWMMotor2s2,servo1pos,PWMMotor3s1,PWMMotor3s2,PWMMotor4s1,PWMMotor4s2,sliMaxMotor,addMotorControl,configWarning,disabledWarning,authorsection,creditsection,teamsection1,teamsection2,specialthanks,boardAction,ultraMainSwitch,ultraDistance,maxThresholdControl1,minThresholdControl1,maxThresholdVerbose1,minThresholdVerbose1,desiredDistance1,laserStatus;
 
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
@@ -332,8 +334,6 @@ void updateRequest() {
   ESPUI.updateSlider(PWMMotor2s2,getMotorOutput(4).toInt());
   ESPUI.updateSlider(sliMaxMotor,getMotorOutput(5).toInt());
   ESPUI.updateLabel(ultraDistance,String(getDistance()));
-  ESPUI.updateLabel(minThresholdVerbose1,String(minThreshold1));
-  ESPUI.updateLabel(maxThresholdVerbose1,String(maxThreshold1));
 }
 
 void checkForDesiredDistance() {
