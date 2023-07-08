@@ -21,9 +21,7 @@ void trackSen() {
   // Read the signal from the sensor: a HIGH pulse whose 
   // duration is the time (in microseconds) from the sending 
   // of the ping to the reception of its echo off of an object. 
-  noInterrupts();
   duration = pulseIn(echoPin1, HIGH);
-  interrupts();
   distance = (duration*.0343)/2;  
   #ifdef DEBUG
   Serial.print("Distance: ");

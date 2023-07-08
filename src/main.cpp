@@ -401,17 +401,15 @@ void loop()
 {
   ps2x.read_gamepad(0, 0);
   PS2control();
-  while (ultraSensorStartTracking == 1) {
+  if (ultraSensorStartTracking == 1) {
     trackSen();
     checkForDesiredDistance();
-    break;
-  }
+  } 
   if(!ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_START)) {
     configtabDisable();
   } else if (ps2x.Button(PSB_SELECT) && ps2x.ButtonPressed(PSB_START)) {
     WiFIDisable();
-  }
-  if(ps2x.ButtonPressed(PSB_R2)) {
+  } else if(ps2x.ButtonPressed(PSB_R2)) {
     digitalWrite(25,HIGH);
     ESPUI.updateSwitcher(laserStatus,1);
   } else if (ps2x.ButtonReleased(PSB_R2)) {
