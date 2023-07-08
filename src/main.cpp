@@ -123,6 +123,7 @@ void thresholdCallback(Control *sender, int type) {
 void initPanel() {
   ESPUI.setVerbosity(Verbosity::Quiet);
   WiFi.setHostname(hostname);
+  WiFi.encryptionType(WIFI_AUTH_WPA2_PSK);
   WiFi.begin(ssid, password);
   Serial.print("\n\nCreating hotspot");
   WiFi.mode(WIFI_AP);
