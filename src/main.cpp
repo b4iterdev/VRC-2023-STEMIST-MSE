@@ -66,6 +66,56 @@ const char *password = "stemistclub";
 
 const char *hostname = "stemist.mse";
 
+// This funtion adjust additional motor speed.
+void additionalMotor(unsigned int motor, int val) {
+  switch (motor) {
+    case 3:
+    switch(val) {
+      case 1:
+      pwm.setPWM(PWM_CHANNEL5,0,addMotorSpeed3);
+      pwm.setPWM(PWM_CHANNEL6,0,0);
+      ESPUI.updateSwitcher(PWMMotor3s1,1);
+      ESPUI.updateSwitcher(PWMMotor3s2,0);
+      break;
+      case -1:
+      pwm.setPWM(PWM_CHANNEL5,0,0);
+      pwm.setPWM(PWM_CHANNEL6,0,addMotorSpeed3);
+      ESPUI.updateSwitcher(PWMMotor3s1,0);
+      ESPUI.updateSwitcher(PWMMotor3s2,1);
+      break;
+      case 0:
+      pwm.setPWM(PWM_CHANNEL5,0,0);
+      pwm.setPWM(PWM_CHANNEL6,0,0);
+      ESPUI.updateSwitcher(PWMMotor3s1,0);
+      ESPUI.updateSwitcher(PWMMotor3s2,0);
+      break;
+    }
+    break;
+    case 4:
+    switch(val) {
+      case 1:
+      pwm.setPWM(PWM_CHANNEL7,0,addMotorSpeed4);
+      pwm.setPWM(PWM_CHANNEL8,0,0);
+      ESPUI.updateSwitcher(PWMMotor4s1,1);
+      ESPUI.updateSwitcher(PWMMotor4s2,0);
+      break;
+      case -1:
+      pwm.setPWM(PWM_CHANNEL7,0,0);
+      pwm.setPWM(PWM_CHANNEL8,0,addMotorSpeed4);
+      ESPUI.updateSwitcher(PWMMotor4s1,0);
+      ESPUI.updateSwitcher(PWMMotor4s2,1);
+      break;
+      case 0:
+      pwm.setPWM(PWM_CHANNEL7,0,0);
+      pwm.setPWM(PWM_CHANNEL8,0,0);
+      ESPUI.updateSwitcher(PWMMotor4s1,0);
+      ESPUI.updateSwitcher(PWMMotor4s2,0);
+      break;
+    }
+    break;
+  }
+}
+
 //This funtion will change addMotorSpeed varible as user change its value on slider.
 void addMotorControlCallback(Control *sender, int type) {
   Serial.print("Slider: ID: ");
@@ -129,7 +179,7 @@ void thresholdCallback(Control *sender, int type) {
       minThreshold1 = switchval;
       ESPUI.updateLabel(minThresholdVerbose1,String(minThreshold1));
     break;
-    case 49:
+    case 47:
       maxThreshold1 = switchval;
       ESPUI.updateLabel(maxThresholdVerbose1,String(maxThreshold1));
     break;
@@ -213,56 +263,6 @@ void initPanel() {
   //Make sliders continually report their position as they are being dragged.
   ESPUI.sliderContinuous = true;
   ESPUI.begin("Stemist Club MSE - VRC 2023 Control Panel");
-}
-
-// This funtion adjust additional motor speed.
-void additionalMotor(unsigned int motor, int val) {
-  switch (motor) {
-    case 3:
-    switch(val) {
-      case 1:
-      pwm.setPWM(PWM_CHANNEL5,0,addMotorSpeed3);
-      pwm.setPWM(PWM_CHANNEL6,0,0);
-      ESPUI.updateSwitcher(PWMMotor3s1,1);
-      ESPUI.updateSwitcher(PWMMotor3s2,0);
-      break;
-      case -1:
-      pwm.setPWM(PWM_CHANNEL5,0,0);
-      pwm.setPWM(PWM_CHANNEL6,0,addMotorSpeed3);
-      ESPUI.updateSwitcher(PWMMotor3s1,0);
-      ESPUI.updateSwitcher(PWMMotor3s2,1);
-      break;
-      case 0:
-      pwm.setPWM(PWM_CHANNEL5,0,0);
-      pwm.setPWM(PWM_CHANNEL6,0,0);
-      ESPUI.updateSwitcher(PWMMotor3s1,0);
-      ESPUI.updateSwitcher(PWMMotor3s2,0);
-      break;
-    }
-    break;
-    case 4:
-    switch(val) {
-      case 1:
-      pwm.setPWM(PWM_CHANNEL7,0,addMotorSpeed4);
-      pwm.setPWM(PWM_CHANNEL8,0,0);
-      ESPUI.updateSwitcher(PWMMotor4s1,1);
-      ESPUI.updateSwitcher(PWMMotor4s2,0);
-      break;
-      case -1:
-      pwm.setPWM(PWM_CHANNEL7,0,0);
-      pwm.setPWM(PWM_CHANNEL8,0,addMotorSpeed4);
-      ESPUI.updateSwitcher(PWMMotor4s1,0);
-      ESPUI.updateSwitcher(PWMMotor4s2,1);
-      break;
-      case 0:
-      pwm.setPWM(PWM_CHANNEL7,0,0);
-      pwm.setPWM(PWM_CHANNEL8,0,0);
-      ESPUI.updateSwitcher(PWMMotor4s1,0);
-      ESPUI.updateSwitcher(PWMMotor4s2,0);
-      break;
-    }
-    break;
-  }
 }
 
 void additionalMotorInputTest() {
