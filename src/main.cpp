@@ -76,9 +76,15 @@ void addMotorControlCallback(Control *sender, int type) {
   switch(id) {
     case 31:
       addMotorSpeed3 = switchval;
+      if(pressed1 == 1) {
+        additionalMotor(3,1);
+      }
     break;
     case 34:
       addMotorSpeed4 = switchval;
+      if(pressed2 == 1) {
+        additionalMotor(4,1);
+      }
     break;
   }  
   Serial.print(switchval);
