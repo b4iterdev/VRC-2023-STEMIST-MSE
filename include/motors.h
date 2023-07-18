@@ -4,12 +4,12 @@
 
 #define MIN_PWM 0
 #define MAX_PWM 4095
-#define DEBUG
 // PWM channels of pca9685 0-16
 #define PWM_CHANNEL1 8
 #define PWM_CHANNEL2 9
 #define PWM_CHANNEL3 10
 #define PWM_CHANNEL4 11
+
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
