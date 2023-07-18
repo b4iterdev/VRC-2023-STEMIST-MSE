@@ -11,4 +11,4 @@ This version is heavily modified internally by STEMIST MSE 2023 Team.
 
 Written by B4iter - STEMIST MSE Gen 5
 
-While being Open-Source, this repo must remains private for Stemist MSE internal. After 16/07/2023, you are free to both use and redistribute this project.
+This repo is archived and switched to new repo: https://github.com/stemistclub/VRC-2023-STEMIST-MSE.git
