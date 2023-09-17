@@ -1,6 +1,8 @@
 # VRC-2023-STEMIST-MSE
 Official Repo for Vietnam Robotics Challenge 2023 by Stemist MSE team.
 
+> **NOTE**: This project is now archived and maintained over in Stemist Club Github Repo [here](https://github.com/stemistclub/VRC-2023-STEMIST-MSE.git)
+
 This version is heavily modified internally by STEMIST MSE 2023 Team.
 
     - Disable switch driving mode so only 2-analog driving mode is used.
